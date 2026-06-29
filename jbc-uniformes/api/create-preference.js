@@ -2,6 +2,7 @@ const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN,
+  options: { timeout: 5000 }
 });
 
 module.exports = async (req, res) => {
@@ -19,34 +20,38 @@ module.exports = async (req, res) => {
     const result = await preference.create({
       body: {
         items: items.map(item => ({
+          id: String(item.id),
           title: `${item.name} - Talle ${item.size}`,
-          quantity: item.qty,
-          unit_price: item.price,
+          quantity: Number(item.qty),
+          unit_price: Number(item.price),
           currency_id: 'ARS',
+          category_id: 'fashion'
         })),
         payer: {
           name: payer.name,
-          phone: { number: payer.phone },
+          phone: { area_code: '341', number: payer.phone }
         },
         external_reference: `JBC-${String(orderNumber).padStart(4, '0')}`,
-        notification_url: `${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : ''}/api/webhook`,
+        notification_url: `https://jbc-uniformes.vercel.app/api/webhook`,
         back_urls: {
-          success: `${process.env.SITE_URL}/gracias.html`,
-          failure: `${process.env.SITE_URL}`,
-          pending: `${process.env.SITE_URL}/gracias.html`,
+          success: `https://jbc-uniformes.vercel.app`,
+          failure: `https://jbc-uniformes.vercel.app`,
+          pending: `https://jbc-uniformes.vercel.app`
         },
         auto_return: 'approved',
         statement_descriptor: 'JBC Uniformes',
+        expires: false
       }
     });
 
     return res.status(200).json({
       id: result.id,
       init_point: result.init_point,
+      sandbox_init_point: result.sandbox_init_point
     });
 
   } catch (error) {
-    console.error('MP Error:', error);
-    return res.status(500).json({ error: error.message });
+    console.error('MP Error:', JSON.stringify(error));
+    return res.status(500).json({ error: error.message, detail: JSON.stringify(error) });
   }
 };
