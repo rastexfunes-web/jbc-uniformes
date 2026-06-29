@@ -1,0 +1,8 @@
+{
+  "name": "jbc-uniformes",
+  "version": "1.0.0",
+  "description": "Tienda online JBC Uniformes Complejo Rosario",
+  "dependencies": {
+    "mercadopago": "^2.0.0"
+  }
+}
