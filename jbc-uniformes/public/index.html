@@ -314,6 +314,7 @@
 // ─── CONFIGURACIÓN ────────────────────────────────────────────────────────────
 const ADMIN_PASS = 'jbc2024';
 const WA_NUMBER  = '5493416850004';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzDSjPRmizO93pAQ5vKgbUmnmpL6rvGcU2IVQrBSthVvs60K1T2PJta1qwtalgKbUQH/exec';
 const MP_LINK    = 'https://mpago.la/2JwcyxZ';
 
 const defaultProducts = [
@@ -467,6 +468,7 @@ function confirmOrder() {
   document.getElementById('cartModal').classList.remove('open');
   document.getElementById('successModal').classList.add('open');
   setTimeout(() => sendWhatsApp(), 600);
+  registrarEnSheets(lastOrder);
   setTimeout(() => sendConfirmToClient(), 1400);
 
   if (metodo === 'qr') {
@@ -731,6 +733,20 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── GOOGLE SHEETS ───────────────────────────────────────────────────────────
+async function registrarEnSheets(order) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order),
+      mode: 'no-cors'
+    });
+  } catch(e) {
+    console.log('Sheets error:', e);
+  }
 }
 
 // ─── NÚMERO DE PEDIDO ────────────────────────────────────────────────────────
