@@ -470,41 +470,32 @@ function confirmOrder() {
   setTimeout(() => sendConfirmToClient(), 1400);
 
   if (metodo === 'qr') {
-    crearPagoMP(lastOrder);
+    setTimeout(() => abrirPagoMP(lastOrder), 2200);
   }
 }
 
-async function crearPagoMP(order) {
-  try {
-    const resp = await fetch('/api/create-preference', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: order.items,
-        payer: { name: order.nombre, phone: order.telefono },
-        orderNumber: order.numero
-      })
+function abrirPagoMP(order) {
+  // Checkout Pro — link directo con monto precargado
+  const mpLink = `https://mpago.la/2JwcyxZ`;
+  
+  // Mostrar QR y link en el modal de éxito
+  const qrDiv = document.getElementById('qrCode');
+  if (qrDiv) {
+    qrDiv.innerHTML = '';
+    new QRCode(qrDiv, {
+      text: mpLink,
+      width: 180, height: 180,
+      colorDark: '#3D0014', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
     });
-    const data = await resp.json();
-    if (data.init_point) {
-      // Mostrar QR con el link de pago real
-      const qrDiv = document.getElementById('qrCode');
-      if (qrDiv) {
-        qrDiv.innerHTML = '';
-        new QRCode(qrDiv, {
-          text: data.init_point,
-          width: 180, height: 180,
-          colorDark: '#3D0014', colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H
-        });
-        document.getElementById('qrMonto').textContent = '$ ' + order.total.toLocaleString('es-AR');
-        document.getElementById('qrLink').href = data.init_point;
-        document.getElementById('qrContainer').style.display = 'block';
-      }
-    }
-  } catch(e) {
-    console.log('MP no disponible:', e);
+    document.getElementById('qrMonto').textContent = '$ ' + order.total.toLocaleString('es-AR') + ' — ingresá este monto en MP';
+    document.getElementById('qrLink').href = mpLink;
+    document.getElementById('qrLink').textContent = '👉 Tocá acá para pagar con Mercado Pago';
+    document.getElementById('qrContainer').style.display = 'block';
   }
+  
+  // También abrir directamente en nueva pestaña
+  window.open(mpLink, '_blank');
 }
 
 function generarQRMercadoPago(total) {
