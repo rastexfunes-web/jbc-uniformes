@@ -232,9 +232,10 @@
 
     <div class="transfer-box">
       <h3>💳 Datos de transferencia</h3>
-      <div class="transfer-row"><span>Titular</span><span>JBC Uniformes</span></div>
-      <div class="transfer-row"><span>CBU</span><span>0000000000000000000000</span></div>
-      <div class="transfer-row"><span>Alias</span><span>JBC.UNIFORMES</span></div>
+      <div class="transfer-row"><span>Titular</span><span>RASTEX S.R.L.</span></div>
+      <div class="transfer-row"><span>CBU</span><span>0070220320000007504073</span></div>
+      <div class="transfer-row"><span>Alias</span><span>raster.complejo</span></div>
+      <div class="transfer-row"><span>CUIT</span><span>33-71910663-9</span></div>
       <div class="transfer-row" style="margin-top:8px;font-weight:700"><span>Total a transferir</span><span id="checkoutTotal" style="color:var(--blue)">$0</span></div>
     </div>
     <p style="font-size:12px;color:var(--gray);margin-bottom:8px">⚠️ Enviá el comprobante por WhatsApp una vez realizada la transferencia.</p>
@@ -430,6 +431,7 @@ function confirmOrder() {
   document.getElementById('cartModal').classList.remove('open');
   document.getElementById('successModal').classList.add('open');
   setTimeout(() => sendWhatsApp(), 600);
+  setTimeout(() => sendConfirmToClient(), 1400);
 
   // Crear preferencia en Mercado Pago y mostrar QR
   crearPagoMP(lastOrder);
@@ -521,15 +523,18 @@ function sendConfirmToClient() {
 
 Hola ${lastOrder.nombre.split(' ')[0]}! Recibimos tu pedido 🎉
 
+🧾 *Pedido N° ${String(lastOrder.numero).padStart(4,'0')}*
+
 📦 *Tu pedido:*
 ${itemLines}
 
 💰 *Total: $ ${lastOrder.total.toLocaleString('es-AR')}*
 
 💳 *Datos para transferir:*
-  • Titular: JBC Uniformes
-  • CBU: 0000000000000000000000
-  • Alias: JBC.UNIFORMES
+  • Titular: RASTEX S.R.L.
+  • CBU: 0070220320000007504073
+  • Alias: raster.complejo
+  • CUIT: 33-71910663-9
 
 ⚠️ Una vez realizada la transferencia, envianos el comprobante por este mismo WhatsApp y confirmamos tu pedido.
 
