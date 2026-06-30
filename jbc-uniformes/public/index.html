@@ -230,7 +230,21 @@
     <div class="form-group"><label>Nombre completo *</label><input type="text" id="clientName" placeholder="Tu nombre y apellido"></div>
     <div class="form-group"><label>Teléfono (WhatsApp) *</label><input type="tel" id="clientPhone" placeholder="Ej: 341 123 4567"></div>
 
-    <div class="transfer-box">
+    <div class="form-group">
+      <label>¿Cómo querés pagar? *</label>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <label style="flex:1;border:2px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:600" id="optTransfer">
+          <input type="radio" name="paymentMethod" value="transferencia" checked style="margin-right:6px" onchange="updatePaymentUI()">
+          💳 Transferencia
+        </label>
+        <label style="flex:1;border:2px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:600" id="optQR">
+          <input type="radio" name="paymentMethod" value="qr" style="margin-right:6px" onchange="updatePaymentUI()">
+          📱 QR Mercado Pago
+        </label>
+      </div>
+    </div>
+
+    <div class="transfer-box" id="transferInfo">
       <h3>💳 Datos de transferencia</h3>
       <div class="transfer-row"><span>Titular</span><span>RASTEX S.R.L.</span></div>
       <div class="transfer-row"><span>CBU</span><span>0070220320000007504073</span></div>
@@ -238,7 +252,8 @@
       <div class="transfer-row"><span>CUIT</span><span>33-71910663-9</span></div>
       <div class="transfer-row" style="margin-top:8px;font-weight:700"><span>Total a transferir</span><span id="checkoutTotal" style="color:var(--blue)">$0</span></div>
     </div>
-    <p style="font-size:12px;color:var(--gray);margin-bottom:8px">⚠️ Enviá el comprobante por WhatsApp una vez realizada la transferencia.</p>
+
+    <p style="font-size:12px;color:var(--gray);margin-bottom:8px" id="paymentNote">⚠️ Te vamos a enviar los datos de transferencia por WhatsApp junto con tu pedido.</p>
     <button class="confirm-btn" onclick="confirmOrder()">✅ Confirmar pedido</button>
     <button class="cancel-btn" onclick="closeCheckout()">Volver al carrito</button>
   </div>
@@ -409,12 +424,33 @@ function openCheckout() {
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('checkoutTotal').textContent = `$ ${total.toLocaleString('es-AR')}`;
   document.getElementById('checkoutModal').classList.add('open');
+  updatePaymentUI();
 }
 function closeCheckout() { document.getElementById('checkoutModal').classList.remove('open'); }
+
+function updatePaymentUI() {
+  const metodo = document.querySelector('input[name="paymentMethod"]:checked').value;
+  const transferBox = document.getElementById('transferInfo');
+  const note = document.getElementById('paymentNote');
+  const optT = document.getElementById('optTransfer');
+  const optQ = document.getElementById('optQR');
+  if (metodo === 'transferencia') {
+    transferBox.style.display = 'block';
+    note.textContent = '⚠️ Te vamos a enviar los datos de transferencia por WhatsApp junto con tu pedido.';
+    optT.style.borderColor = 'var(--blue)'; optT.style.background = 'var(--sky)';
+    optQ.style.borderColor = 'var(--border)'; optQ.style.background = 'white';
+  } else {
+    transferBox.style.display = 'none';
+    note.textContent = '📱 Te vamos a enviar el QR de pago por Mercado Pago junto a tu pedido por WhatsApp.';
+    optQ.style.borderColor = 'var(--blue)'; optQ.style.background = 'var(--sky)';
+    optT.style.borderColor = 'var(--border)'; optT.style.background = 'white';
+  }
+}
 
 function confirmOrder() {
   const name   = document.getElementById('clientName').value.trim();
   const phone  = document.getElementById('clientPhone').value.trim();
+  const metodo = document.querySelector('input[name="paymentMethod"]:checked').value;
   if (!name||!phone) { showToast('⚠️ Completá los campos obligatorios'); return; }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   const now = new Date();
@@ -423,7 +459,7 @@ function confirmOrder() {
     numero: orderNum,
     fecha: now.toLocaleDateString('es-AR'),
     hora:  now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
-    nombre: name, telefono: phone,
+    nombre: name, telefono: phone, metodoPago: metodo,
     items: [...cart], total
   };
   document.getElementById('orderNumberDisplay').textContent = '🧾 Pedido N° ' + String(orderNum).padStart(4,'0');
@@ -433,8 +469,9 @@ function confirmOrder() {
   setTimeout(() => sendWhatsApp(), 600);
   setTimeout(() => sendConfirmToClient(), 1400);
 
-  // Crear preferencia en Mercado Pago y mostrar QR
-  crearPagoMP(lastOrder);
+  if (metodo === 'qr') {
+    crearPagoMP(lastOrder);
+  }
 }
 
 async function crearPagoMP(order) {
@@ -493,6 +530,7 @@ function sendWhatsApp() {
   const itemLines = lastOrder.items.map(i=>
     `  • ${i.name} | Talle: ${i.size} | Cant: ${i.qty} | $ ${(i.price*i.qty).toLocaleString('es-AR')}`
   ).join('\n');
+  const metodoTxt = lastOrder.metodoPago === 'qr' ? '📱 QR Mercado Pago' : '💳 Transferencia bancaria';
   const msg =
 `🛒 *NUEVO PEDIDO - JBC Uniformes*
 🧾 *N° ${String(lastOrder.numero).padStart(4,'0')}*
@@ -500,7 +538,7 @@ function sendWhatsApp() {
 
 👤 *Cliente:* ${lastOrder.nombre}
 📞 *Teléfono:* ${lastOrder.telefono}
-
+💰 *Forma de pago:* ${metodoTxt}
 
 📦 *Detalle:*
 ${itemLines}
@@ -518,6 +556,11 @@ function sendConfirmToClient() {
   ).join('\n');
   const clientPhone = lastOrder.telefono.replace(/\D/g,'');
   const fullPhone = clientPhone.startsWith('549') ? clientPhone : `549${clientPhone}`;
+
+  const pagoBlock = lastOrder.metodoPago === 'qr'
+    ? `📱 *Vas a pagar con QR de Mercado Pago*\nEn breve te enviamos el link/QR para abonar.`
+    : `💳 *Datos para transferir:*\n  • Titular: RASTEX S.R.L.\n  • CBU: 0070220320000007504073\n  • Alias: raster.complejo\n  • CUIT: 33-71910663-9\n\n⚠️ Una vez realizada la transferencia, envianos el comprobante por este mismo WhatsApp.`;
+
   const msg =
 `✅ *Confirmación de pedido - JBC Uniformes*
 
@@ -530,13 +573,7 @@ ${itemLines}
 
 💰 *Total: $ ${lastOrder.total.toLocaleString('es-AR')}*
 
-💳 *Datos para transferir:*
-  • Titular: RASTEX S.R.L.
-  • CBU: 0070220320000007504073
-  • Alias: raster.complejo
-  • CUIT: 33-71910663-9
-
-⚠️ Una vez realizada la transferencia, envianos el comprobante por este mismo WhatsApp y confirmamos tu pedido.
+${pagoBlock}
 
 ¡Gracias por elegirnos! 🙌`;
   window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`,'_blank');
