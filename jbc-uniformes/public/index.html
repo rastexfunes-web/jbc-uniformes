@@ -264,11 +264,10 @@
   <div class="success-box">
     <div class="success-icon">✅</div>
     <h2>¡Pedido registrado!</h2>
-    <div id="qrContainer" style="display:none;margin:16px auto;text-align:center">
-      <p style="font-size:12px;color:var(--gray);margin-bottom:8px">📱 Escaneá con cualquier app de pago</p>
-      <div id="qrCode" style="display:inline-block;padding:12px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12)"></div>
-      <p id="qrMonto" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-top:8px"></p>
-      <a id="qrLink" href="#" target="_blank" style="display:block;font-size:12px;color:var(--green);margin-top:4px;font-weight:600">También podés tocar acá para pagar →</a>
+    <div id="mpContainer" style="display:none;margin:16px auto;text-align:center;background:var(--sky);border-radius:12px;padding:16px">
+      <p style="font-size:14px;font-weight:600;margin-bottom:12px">📱 Pagá con Mercado Pago</p>
+      <p id="mpMonto" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--blue);margin-bottom:12px"></p>
+      <a id="mpLink" href="#" target="_blank" style="display:block;background:#009ee3;color:white;padding:12px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none">💳 Ir a pagar con Mercado Pago</a>
     </div>
     <p id="orderNumberDisplay" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px"></p>
     <p>Escaneá el QR para pagar o usá los botones de abajo.</p>
@@ -477,26 +476,10 @@ function confirmOrder() {
 }
 
 function abrirPagoMP(order) {
-  // Checkout Pro — link directo con monto precargado
-  const mpLink = `https://link.mercadopago.com.ar/colegiorosario`;
-  
-  // Mostrar QR y link en el modal de éxito
-  const qrDiv = document.getElementById('qrCode');
-  if (qrDiv) {
-    qrDiv.innerHTML = '';
-    new QRCode(qrDiv, {
-      text: mpLink,
-      width: 180, height: 180,
-      colorDark: '#3D0014', colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    });
-    document.getElementById('qrMonto').textContent = '$ ' + order.total.toLocaleString('es-AR') + ' — ingresá este monto en MP';
-    document.getElementById('qrLink').href = mpLink;
-    document.getElementById('qrLink').textContent = '👉 Tocá acá para pagar con Mercado Pago';
-    document.getElementById('qrContainer').style.display = 'block';
-  }
-  
-  // También abrir directamente en nueva pestaña
+  const mpLink = 'https://link.mercadopago.com.ar/colegiorosario';
+  document.getElementById('mpMonto').textContent = '$ ' + order.total.toLocaleString('es-AR');
+  document.getElementById('mpLink').href = mpLink;
+  document.getElementById('mpContainer').style.display = 'block';
   window.open(mpLink, '_blank');
 }
 
@@ -595,6 +578,7 @@ function downloadCSV() {
 function newOrder() {
   cart=[]; lastOrder=null; updateCartUI();
   ['clientName','clientPhone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mpContainer').style.display = 'none';
   document.getElementById('successModal').classList.remove('open');
 }
 
