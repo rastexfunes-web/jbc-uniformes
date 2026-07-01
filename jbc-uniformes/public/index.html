@@ -237,9 +237,13 @@
           <input type="radio" name="paymentMethod" value="transferencia" checked style="margin-right:6px" onchange="updatePaymentUI()">
           💳 Transferencia
         </label>
+        <label style="flex:1;border:2px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:600" id="optCuotas">
+          <input type="radio" name="paymentMethod" value="cuotas" style="margin-right:6px" onchange="updatePaymentUI()">
+          📅 3 Cuotas
+        </label>
         <label style="flex:1;border:2px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:600" id="optQR">
           <input type="radio" name="paymentMethod" value="qr" style="margin-right:6px" onchange="updatePaymentUI()">
-          📱 QR Mercado Pago
+          📱 Mercado Pago
         </label>
       </div>
     </div>
@@ -272,8 +276,13 @@
     <p id="orderNumberDisplay" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px"></p>
     <p>¡Muchas gracias por tu compra! 🙌 Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
 
+    <div id="infoCuotas" style="background:#fff8e1;border:2px solid var(--accent);border-radius:10px;padding:14px;margin:12px 0;text-align:left;font-size:13px">
+      <p id="tituloCuotas" style="font-weight:700;margin-bottom:6px"></p>
+      <p id="textoCuotas"></p>
+    </div>
 
-    <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green)">📲 Enviar pedido por WhatsApp</button>
+
+    <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green);font-size:17px;padding:16px;margin-top:8px;box-shadow:0 4px 12px rgba(22,163,74,0.4)">📲 Enviar pedido por WhatsApp</button>
     <button class="action-btn" onclick="sendConfirmToClient()" style="background:#075e54">📩 Enviar confirmación al cliente</button>
     <button class="action-btn" onclick="downloadCSV()" style="background:var(--blue)">⬇️ Descargar pedido (Excel)</button>
     <br><button class="new-order-btn" onclick="newOrder()">Hacer otro pedido</button>
@@ -433,17 +442,23 @@ function updatePaymentUI() {
   const transferBox = document.getElementById('transferInfo');
   const note = document.getElementById('paymentNote');
   const optT = document.getElementById('optTransfer');
+  const optC = document.getElementById('optCuotas');
   const optQ = document.getElementById('optQR');
+
+  [optT, optC, optQ].forEach(o => { o.style.borderColor = 'var(--border)'; o.style.background = 'white'; });
+
   if (metodo === 'transferencia') {
     transferBox.style.display = 'block';
-    note.textContent = '⚠️ Te vamos a enviar los datos de transferencia por WhatsApp junto con tu pedido.';
+    note.textContent = '⚠️ Al confirmar te mostramos los datos para transferir.';
     optT.style.borderColor = 'var(--blue)'; optT.style.background = 'var(--sky)';
-    optQ.style.borderColor = 'var(--border)'; optQ.style.background = 'white';
+  } else if (metodo === 'cuotas') {
+    transferBox.style.display = 'none';
+    note.textContent = '📅 Al confirmar te avisamos el importe por cuota. En breve te enviamos el link de pago.';
+    optC.style.borderColor = 'var(--blue)'; optC.style.background = 'var(--sky)';
   } else {
     transferBox.style.display = 'none';
-    note.textContent = '📱 Te vamos a enviar el QR de pago por Mercado Pago junto a tu pedido por WhatsApp.';
+    note.textContent = '📱 Al confirmar te redirigimos a Mercado Pago.';
     optQ.style.borderColor = 'var(--blue)'; optQ.style.background = 'var(--sky)';
-    optT.style.borderColor = 'var(--border)'; optT.style.background = 'white';
   }
 }
 
@@ -467,6 +482,30 @@ function confirmOrder() {
   document.getElementById('cartModal').classList.remove('open');
   document.getElementById('successModal').classList.add('open');
   registrarEnSheets(lastOrder);
+
+  // Mostrar info de pago según método elegido
+  const totalPedido = lastOrder.total;
+  const totalCuotas = Math.round(totalPedido * 1.20);
+  const infoCuotas = document.getElementById('textoCuotas');
+  const tituloCuotas = document.getElementById('tituloCuotas');
+
+  if (metodo === 'transferencia') {
+    tituloCuotas.textContent = '🏦 Datos para transferir:';
+    infoCuotas.innerHTML = `
+      <strong>Titular:</strong> RASTEX S.R.L.<br>
+      <strong>CBU:</strong> 0070220320000007504073<br>
+      <strong>Alias:</strong> raster.complejo<br>
+      <strong>CUIT:</strong> 33-71910663-9<br>
+      <br>💰 <strong>Importe a transferir: $ ${totalPedido.toLocaleString('es-AR')}</strong>
+    `;
+  } else {
+    tituloCuotas.textContent = '📅 Pago en 3 cuotas:';
+    if (totalPedido >= 50000) {
+      infoCuotas.innerHTML = `🎉 Por superar los $50.000 <strong>las 3 cuotas son sin interés</strong>.<br><br>💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong><br><br>⏳ <em>En breve te enviamos el link de pago por WhatsApp.</em>`;
+    } else {
+      infoCuotas.innerHTML = `💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong> (+20%)<br><br>⏳ <em>En breve te enviamos el link de pago por WhatsApp.</em>`;
+    }
+  }
 
   if (metodo === 'qr') {
     setTimeout(() => abrirPagoMP(lastOrder), 500);
