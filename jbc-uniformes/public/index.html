@@ -602,6 +602,7 @@ function renderAdminPanel() {
           <input class="admin-input" type="number" id="admin-price-${p.id}" value="${p.price}" placeholder="Precio">
           <input class="admin-input" type="text" id="admin-emoji-${p.id}" value="${p.emoji}" placeholder="Emoji">
         </div>
+        <input class="admin-input" type="text" id="admin-url-${p.id}" value="${p.photo && p.photo.startsWith('http') ? p.photo : ''}" placeholder="URL de imagen (ej: https://i.imgur.com/...)">
         <button class="upload-photo-btn" style="background:var(--red);width:100%;padding:8px;margin-top:4px" onclick="deleteProduct(${p.id})">🗑️ Eliminar producto</button>
       </div>
     </div>
@@ -654,9 +655,12 @@ function saveAdminChanges() {
     const desc  = document.getElementById(`admin-desc-${p.id}`)?.value.trim();
     const price = parseFloat(document.getElementById(`admin-price-${p.id}`)?.value) || p.price;
     const emoji = document.getElementById(`admin-emoji-${p.id}`)?.value.trim() || p.emoji;
+    const url   = document.getElementById(`admin-url-${p.id}`)?.value.trim();
     if (name) p.name = name;
     if (desc) p.desc = desc;
     p.price = price; p.emoji = emoji;
+    if (url) p.photo = url;
+    else if (!url && p.photo && p.photo.startsWith('http')) p.photo = null;
   });
   saveProducts(); renderProducts();
   showToast('✅ Cambios guardados');
