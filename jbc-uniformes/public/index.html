@@ -803,7 +803,7 @@ function getNextOrderNumber() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-renderProducts();
+try { renderProducts(); } catch(e) { console.error('renderProducts error:', e); }
 if (window.location.search.includes('admin')) openAdmin();
 }
 </script>
