@@ -337,8 +337,13 @@ let lastOrder = null;
 function loadProducts() {
   try {
     const saved = localStorage.getItem('jbc_products');
-    if (saved) return JSON.parse(saved);
-  } catch(e) {}
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch(e) {
+    localStorage.removeItem('jbc_products');
+  }
   return JSON.parse(JSON.stringify(defaultProducts));
 }
 
@@ -797,10 +802,8 @@ function getNextOrderNumber() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  renderProducts();
-  if (window.location.search.includes('admin')) openAdmin();
-});
+renderProducts();
+if (window.location.search.includes('admin')) openAdmin();
 }
 </script>
 </body>
