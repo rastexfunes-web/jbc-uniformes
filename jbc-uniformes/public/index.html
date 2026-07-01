@@ -270,7 +270,7 @@
       <a id="mpLink" href="#" target="_blank" style="display:block;background:#009ee3;color:white;padding:12px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none">💳 Ir a pagar con Mercado Pago</a>
     </div>
     <p id="orderNumberDisplay" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px"></p>
-    <p>Escaneá el QR para pagar o usá los botones de abajo.</p>
+    <p>Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
 
 
     <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green)">📲 Enviar pedido a JBC</button>
@@ -508,7 +508,7 @@ function sendWhatsApp() {
   ).join('\n');
   const metodoTxt = lastOrder.metodoPago === 'qr' ? '📱 QR Mercado Pago' : '💳 Transferencia bancaria';
   const msg =
-`🛒 *NUEVO PEDIDO - JBC Uniformes*
+`🛒 *NUEVO PEDIDO - Uniformes Colegio Rosario*
 🧾 *N° ${String(lastOrder.numero).padStart(4,'0')}*
 📅 ${lastOrder.fecha} ${lastOrder.hora}
 
@@ -521,7 +521,7 @@ ${itemLines}
 
 💰 *TOTAL: $ ${lastOrder.total.toLocaleString('es-AR')}*
 
-_Pedido realizado desde la tienda online JBC_`;
+_Pedido realizado desde la tienda online Uniformes Colegio Rosario_`;
   window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
@@ -538,7 +538,7 @@ function sendConfirmToClient() {
     : `💳 *Datos para transferir:*\n  • Titular: RASTEX S.R.L.\n  • CBU: 0070220320000007504073\n  • Alias: raster.complejo\n  • CUIT: 33-71910663-9\n\n⚠️ Una vez realizada la transferencia, envianos el comprobante por este mismo WhatsApp.`;
 
   const msg =
-`✅ *Confirmación de pedido - JBC Uniformes*
+`✅ *Confirmación de pedido - Uniformes Colegio Rosario*
 
 Hola ${lastOrder.nombre.split(' ')[0]}! Recibimos tu pedido 🎉
 
