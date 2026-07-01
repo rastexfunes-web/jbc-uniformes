@@ -268,11 +268,7 @@
   <div class="success-box">
     <div class="success-icon">✅</div>
     <h2>¡Pedido registrado!</h2>
-    <div id="mpContainer" style="display:none;margin:16px auto;text-align:center;background:var(--sky);border-radius:12px;padding:16px">
-      <p style="font-size:14px;font-weight:600;margin-bottom:12px">📱 Pagá con Mercado Pago</p>
-      <p id="mpMonto" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--blue);margin-bottom:12px"></p>
-      <a id="mpLink" href="#" target="_blank" style="display:block;background:#009ee3;color:white;padding:12px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none">💳 Ir a pagar con Mercado Pago</a>
-    </div>
+
     <p id="orderNumberDisplay" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px"></p>
     <p>¡Muchas gracias por tu compra! 🙌 Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
 
@@ -283,9 +279,8 @@
 
 
     <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green);font-size:17px;padding:16px;margin-top:8px;box-shadow:0 4px 12px rgba(22,163,74,0.4)">📲 Enviar pedido por WhatsApp</button>
-    <button class="action-btn" onclick="sendConfirmToClient()" style="background:#075e54">📩 Enviar confirmación al cliente</button>
-    <button class="action-btn" onclick="downloadCSV()" style="background:var(--blue)">⬇️ Descargar pedido (Excel)</button>
     <br><button class="new-order-btn" onclick="newOrder()">Hacer otro pedido</button>
+    <br><button class="new-order-btn" onclick="cancelarCompra()" style="color:var(--red)">❌ Cancelar compra</button>
   </div>
 </div>
 
@@ -488,8 +483,10 @@ function confirmOrder() {
   const totalCuotas = Math.round(totalPedido * 1.20);
   const infoCuotas = document.getElementById('textoCuotas');
   const tituloCuotas = document.getElementById('tituloCuotas');
+  const infoCuotasDiv = document.getElementById('infoCuotas');
 
   if (metodo === 'transferencia') {
+    infoCuotasDiv.style.display = 'block';
     tituloCuotas.textContent = '🏦 Datos para transferir:';
     infoCuotas.innerHTML = `
       <strong>Titular:</strong> RASTEX S.R.L.<br>
@@ -498,19 +495,19 @@ function confirmOrder() {
       <strong>CUIT:</strong> 33-71910663-9<br>
       <br>💰 <strong>Importe a transferir: $ ${totalPedido.toLocaleString('es-AR')}</strong>
     `;
-  } else {
+  } else if (metodo === 'cuotas') {
+    infoCuotasDiv.style.display = 'block';
     tituloCuotas.textContent = '📅 Pago en 3 cuotas:';
     if (totalPedido >= 50000) {
       infoCuotas.innerHTML = `🎉 Por superar los $50.000 <strong>las 3 cuotas son sin interés</strong>.<br><br>💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong><br><br>⏳ <em>En breve te enviamos el link de pago por WhatsApp.</em>`;
     } else {
       infoCuotas.innerHTML = `💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong> (+20%)<br><br>⏳ <em>En breve te enviamos el link de pago por WhatsApp.</em>`;
     }
-  }
-
-  if (metodo === 'qr') {
+  } else {
+    // Mercado Pago — ocultar placa y abrir link directo
+    infoCuotasDiv.style.display = 'none';
     setTimeout(() => abrirPagoMP(lastOrder), 500);
   }
-}
 
 function abrirPagoMP(order) {
   const mpLink = 'https://link.mercadopago.com.ar/colegiorosario';
@@ -610,6 +607,15 @@ function downloadCSV() {
   const a = document.createElement('a');
   a.href=url; a.download=`pedido_jbc_${lastOrder.fecha.replace(/\//g,'-')}_${lastOrder.nombre.replace(/ /g,'_')}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+function cancelarCompra() {
+  if (!confirm('¿Estás seguro que querés cancelar la compra?')) return;
+  cart = []; lastOrder = null; updateCartUI();
+  ['clientName','clientPhone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('successModal').classList.remove('open');
+  document.getElementById('infoCuotas').style.display = 'none';
+  showToast('Compra cancelada');
 }
 
 function newOrder() {
