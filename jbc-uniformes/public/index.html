@@ -797,10 +797,10 @@ function getNextOrderNumber() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-renderProducts();
-
-// Abrir admin si la URL contiene ?admin
-if (window.location.search.includes('admin')) openAdmin();
+document.addEventListener('DOMContentLoaded', function() {
+  renderProducts();
+  if (window.location.search.includes('admin')) openAdmin();
+});
 }
 </script>
 </body>
