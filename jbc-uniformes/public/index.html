@@ -466,12 +466,10 @@ function confirmOrder() {
   document.getElementById('checkoutModal').classList.remove('open');
   document.getElementById('cartModal').classList.remove('open');
   document.getElementById('successModal').classList.add('open');
-  setTimeout(() => sendWhatsApp(), 600);
   registrarEnSheets(lastOrder);
-  setTimeout(() => sendConfirmToClient(), 1400);
 
   if (metodo === 'qr') {
-    setTimeout(() => abrirPagoMP(lastOrder), 2200);
+    setTimeout(() => abrirPagoMP(lastOrder), 500);
   }
 }
 
