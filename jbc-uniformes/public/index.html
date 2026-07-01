@@ -270,10 +270,9 @@
       <a id="mpLink" href="#" target="_blank" style="display:block;background:#009ee3;color:white;padding:12px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none">💳 Ir a pagar con Mercado Pago</a>
     </div>
     <p id="orderNumberDisplay" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px"></p>
-    <p>Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
+    <p>¡Muchas gracias por tu compra! 🙌 Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
 
 
-    <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green)">📲 Enviar pedido a JBC</button>
     <button class="action-btn" onclick="sendConfirmToClient()" style="background:#075e54">📩 Enviar confirmación al cliente</button>
     <button class="action-btn" onclick="downloadCSV()" style="background:var(--blue)">⬇️ Descargar pedido (Excel)</button>
     <br><button class="new-order-btn" onclick="newOrder()">Hacer otro pedido</button>
@@ -551,7 +550,7 @@ ${itemLines}
 
 ${pagoBlock}
 
-¡Gracias por elegirnos! 🙌`;
+¡Muchas gracias por tu compra! Nos pondremos en contacto para coordinar la entrega. 🙌`;
   window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
