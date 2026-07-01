@@ -621,7 +621,7 @@ function cancelarCompra() {
 function newOrder() {
   cart=[]; lastOrder=null; updateCartUI();
   ['clientName','clientPhone'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('mpContainer').style.display = 'none';
+  document.getElementById('infoCuotas').style.display = 'none';
   document.getElementById('successModal').classList.remove('open');
 }
 
@@ -801,7 +801,7 @@ renderProducts();
 
 // Abrir admin si la URL contiene ?admin
 if (window.location.search.includes('admin')) openAdmin();
-  }
+}
 </script>
 </body>
 </html>
