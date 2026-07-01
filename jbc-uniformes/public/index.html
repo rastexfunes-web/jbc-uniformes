@@ -273,6 +273,7 @@
     <p>¡Muchas gracias por tu compra! 🙌 Tu pedido fue registrado. Usá los botones de abajo para continuar.</p>
 
 
+    <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green)">📲 Enviar pedido por WhatsApp</button>
     <button class="action-btn" onclick="sendConfirmToClient()" style="background:#075e54">📩 Enviar confirmación al cliente</button>
     <button class="action-btn" onclick="downloadCSV()" style="background:var(--blue)">⬇️ Descargar pedido (Excel)</button>
     <br><button class="new-order-btn" onclick="newOrder()">Hacer otro pedido</button>
@@ -716,6 +717,16 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── COPIAR AL PORTAPAPELES ──────────────────────────────────────────────────
+function copiarTexto(elementId, btn) {
+  const texto = document.getElementById(elementId).textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    btn.textContent = '✓ Copiado';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = 'var(--blue)'; }, 2000);
+  });
 }
 
 // ─── GOOGLE SHEETS ───────────────────────────────────────────────────────────
