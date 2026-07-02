@@ -303,13 +303,17 @@ const WA_NUMBER  = '5493416850004';
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzDSjPRmizO93pAQ5vKgbUmnmpL6rvGcU2IVQrBSthVvs60K1T2PJta1qwtalgKbUQH/exec';
 const MP_LINK    = 'https://link.mercadopago.com.ar/colegiorosario';
 
+const TALLES_NINOS = ["2","4","6","8","10","12","14"];
+const TALLES_ADULTOS = ["16","S","M","L","XL","XXL","XXXL"];
+const TODOS_TALLES = [...TALLES_NINOS, ...TALLES_ADULTOS];
+
 const defaultProducts = [
-  { id:1, name:"Remera Polo Institucional", desc:"100% algodón piqué, logo bordado", price:18500, emoji:"👕", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] },
-  { id:2, name:"Pantalón de Jogging", desc:"Frisa doble, con cordón y bolsillos", price:24000, emoji:"👖", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] },
-  { id:3, name:"Buzo con Capucha", desc:"Frisa 3 hilos, cierre central, puños canelados", price:32000, emoji:"🧥", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] },
-  { id:4, name:"Campera Rompeviento", desc:"Impermeable, forrada, bolsillos con cierre", price:48000, emoji:"🧣", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] },
-  { id:5, name:"Short Deportivo", desc:"Microfibra, elástico reforzado", price:15000, emoji:"🩳", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] },
-  { id:6, name:"Set Completo (Remera + Pantalón)", desc:"Combiná cualquier color institucional", price:38000, emoji:"🎽", photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] }
+  { id:1, name:"Remera Polo Institucional", desc:"100% algodón piqué, logo bordado", price:18500, priceAdult:21000, emoji:"👕", photo:null, sizes:TODOS_TALLES },
+  { id:2, name:"Pantalón de Jogging", desc:"Frisa doble, con cordón y bolsillos", price:24000, priceAdult:27000, emoji:"👖", photo:null, sizes:TODOS_TALLES },
+  { id:3, name:"Buzo con Capucha", desc:"Frisa 3 hilos, cierre central, puños canelados", price:32000, priceAdult:36000, emoji:"🧥", photo:null, sizes:TODOS_TALLES },
+  { id:4, name:"Campera Rompeviento", desc:"Impermeable, forrada, bolsillos con cierre", price:48000, priceAdult:54000, emoji:"🧣", photo:null, sizes:TODOS_TALLES },
+  { id:5, name:"Short Deportivo", desc:"Microfibra, elástico reforzado", price:15000, priceAdult:18000, emoji:"🩳", photo:null, sizes:TODOS_TALLES },
+  { id:6, name:"Set Completo (Remera + Pantalón)", desc:"Combiná cualquier color institucional", price:38000, priceAdult:44000, emoji:"🎽", photo:null, sizes:TODOS_TALLES }
 ];
 
 let products = loadProducts();
@@ -360,6 +364,14 @@ function renderProducts() {
   `).join('');
 }
 
+function updatePrice(productId, size) {
+  const product = products.find(p => p.id === productId);
+  if (!product || !size) return;
+  const price = TALLES_ADULTOS.includes(size) ? (product.priceAdult || product.price) : product.price;
+  const display = document.getElementById(`price-display-${productId}`);
+  if (display) display.textContent = `$ ${price.toLocaleString('es-AR')}`;
+}
+
 function changeQty(id, delta) {
   const input = document.getElementById(`qty-${id}`);
   input.value = Math.max(1, Math.min(99, parseInt(input.value||1) + delta));
@@ -370,9 +382,10 @@ function addToCart(productId) {
   const size = document.getElementById(`size-${productId}`).value;
   const qty  = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
   if (!size) { showToast('⚠️ Elegí un talle'); return; }
+  const price = TALLES_ADULTOS.includes(size) ? (product.priceAdult || product.price) : product.price;
   const existing = cart.find(i => i.id === productId && i.size === size);
   if (existing) existing.qty += qty;
-  else cart.push({ ...product, size, qty });
+  else cart.push({ ...product, price, size, qty });
   updateCartUI();
   showToast('✅ Agregado al pedido');
 }
@@ -599,7 +612,10 @@ function renderAdminPanel() {
         <input class="admin-input" type="text" id="admin-name-${p.id}" value="${p.name}" placeholder="Nombre">
         <input class="admin-input" type="text" id="admin-desc-${p.id}" value="${p.desc}" placeholder="Descripción">
         <div class="admin-field-row">
-          <input class="admin-input" type="number" id="admin-price-${p.id}" value="${p.price}" placeholder="Precio">
+          <input class="admin-input" type="number" id="admin-price-${p.id}" value="${p.price}" placeholder="Precio talle 2-14">
+          <input class="admin-input" type="number" id="admin-priceadult-${p.id}" value="${p.priceAdult || ''}" placeholder="Precio talle 16-XXXL">
+        </div>
+        <div class="admin-field-row">
           <input class="admin-input" type="text" id="admin-emoji-${p.id}" value="${p.emoji}" placeholder="Emoji">
         </div>
         <input class="admin-input" type="text" id="admin-url-${p.id}" value="${p.photo && p.photo.startsWith('http') ? p.photo : ''}" placeholder="URL de imagen (ej: https://i.imgur.com/...)">
@@ -653,12 +669,13 @@ function saveAdminChanges() {
   products.forEach(p => {
     const name  = document.getElementById(`admin-name-${p.id}`)?.value.trim();
     const desc  = document.getElementById(`admin-desc-${p.id}`)?.value.trim();
-    const price = parseFloat(document.getElementById(`admin-price-${p.id}`)?.value) || p.price;
-    const emoji = document.getElementById(`admin-emoji-${p.id}`)?.value.trim() || p.emoji;
-    const url   = document.getElementById(`admin-url-${p.id}`)?.value.trim();
+    const price      = parseFloat(document.getElementById(`admin-price-${p.id}`)?.value) || p.price;
+    const priceAdult = parseFloat(document.getElementById(`admin-priceadult-${p.id}`)?.value) || p.priceAdult || price;
+    const emoji      = document.getElementById(`admin-emoji-${p.id}`)?.value.trim() || p.emoji;
+    const url        = document.getElementById(`admin-url-${p.id}`)?.value.trim();
     if (name) p.name = name;
     if (desc) p.desc = desc;
-    p.price = price; p.emoji = emoji;
+    p.price = price; p.priceAdult = priceAdult; p.emoji = emoji;
     if (url) p.photo = url;
     else if (!url && p.photo && p.photo.startsWith('http')) p.photo = null;
   });
