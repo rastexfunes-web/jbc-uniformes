@@ -245,10 +245,18 @@
       </div>
       <div class="transfer-row"><span>CUIT</span><span>33-71910663-9</span></div>
       <div class="transfer-row" style="margin-top:8px;font-weight:700">
-        <span>Total</span><span id="checkoutTotal" style="color:var(--blue)">$0</span>
+        <span>Total a transferir</span><span id="checkoutTotal" style="color:var(--blue)">$0</span>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--gray);margin-bottom:8px" id="payNote">⚠️ Al confirmar te mostramos los datos para transferir.</p>
+
+    <div id="resumenCuotas" style="display:none;background:var(--sky);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:13px">
+      <div id="resumenCuotasContenido"></div>
+    </div>
+
+    <div id="resumenMP" style="display:none;background:var(--sky);border:2px solid var(--blue);border-radius:10px;padding:14px;margin:12px 0;font-size:13px">
+      <div id="resumenMPContenido"></div>
+    </div>
+
     <button class="confirm-btn" onclick="confirmOrder()">✅ Confirmar pedido</button>
     <button class="cancel-btn" onclick="closeCheckout()">Volver al carrito</button>
   </div>
@@ -431,20 +439,39 @@ function closeCheckout() { document.getElementById('checkoutModal').classList.re
 function selectPago(metodo) {
   metodoPagoSeleccionado = metodo;
   ['optTransfer','optCuotas','optMP'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const transferInfo = document.getElementById('transferInfo');
-  const payNote = document.getElementById('payNote');
+  const transferInfo    = document.getElementById('transferInfo');
+  const resumenCuotas   = document.getElementById('resumenCuotas');
+  const resumenMP       = document.getElementById('resumenMP');
+  const total = cart.reduce((s,i)=>s+i.price*i.qty, 0);
+  const totalCuotas = Math.round(total * 1.20);
+  const cuotaValor = Math.round(totalCuotas / 3);
+
+  transferInfo.style.display  = 'none';
+  resumenCuotas.style.display = 'none';
+  resumenMP.style.display     = 'none';
+
   if (metodo === 'transferencia') {
     document.getElementById('optTransfer').classList.add('active');
+    document.getElementById('checkoutTotal').textContent = `$ ${total.toLocaleString('es-AR')}`;
     transferInfo.style.display = 'block';
-    payNote.textContent = '⚠️ Al confirmar te mostramos los datos para transferir.';
   } else if (metodo === 'cuotas') {
     document.getElementById('optCuotas').classList.add('active');
-    transferInfo.style.display = 'none';
-    payNote.textContent = '📅 Al confirmar te avisamos el importe por cuota.';
+    resumenCuotas.style.display = 'block';
+    if (total >= 50000) {
+      document.getElementById('resumenCuotasContenido').innerHTML =
+        `🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br>
+        💰 <strong>$ ${cuotaValor.toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong>`;
+    } else {
+      document.getElementById('resumenCuotasContenido').innerHTML =
+        `📅 <strong>3 cuotas con el 20% adicional</strong><br>
+        💰 <strong>$ ${cuotaValor.toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong>`;
+    }
   } else {
     document.getElementById('optMP').classList.add('active');
-    transferInfo.style.display = 'none';
-    payNote.textContent = '📱 Al confirmar te redirigimos a Mercado Pago.';
+    resumenMP.style.display = 'block';
+    document.getElementById('resumenMPContenido').innerHTML =
+      `📱 <strong>Mercado Pago</strong><br>
+      💰 <strong>Total a pagar: $ ${total.toLocaleString('es-AR')}</strong>`;
   }
 }
 
