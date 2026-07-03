@@ -7,6 +7,8 @@
 <meta name="google-site-verification" content="rK6mE4dNpJhXRBI6jCONAkv4ddNWp4WnM54kbyf8xeQ" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
   :root {
     --navy: #3D0014;
@@ -305,10 +307,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getFirestore, collection, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyBOAf9OF9JaRHswEv6naZHvWs9nfhG1R1Y",
     authDomain: "colegio-rosario.firebaseapp.com",
@@ -317,60 +316,50 @@
     messagingSenderId: "636439702755",
     appId: "1:636439702755:web:a65486eaa732a7269529d6"
   };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
   window.db = db;
-  window.firestoreSetDoc = setDoc;
-  window.firestoreDoc = doc;
-  window.firestoreCollection = collection;
-  window.firestoreGetDocs = getDocs;
 
-  // Cargar productos desde Firebase
   window.cargarProductosFirebase = async function() {
     try {
-      const snapshot = await getDocs(collection(db, 'productos'));
+      const snapshot = await db.collection('productos').orderBy('orden').get();
       if (!snapshot.empty) {
         const prods = [];
-        snapshot.forEach(d => prods.push({ id: d.id, ...d.data() }));
-        // Ordenar por orden
-        prods.sort((a,b) => (a.orden||0) - (b.orden||0));
+        snapshot.forEach(d => prods.push({ ...d.data(), id: isNaN(d.id) ? d.id : Number(d.id) }));
         window.products = prods;
-        renderProducts();
+        products = prods;
+        if (window.renderProducts) window.renderProducts();
       } else {
-        // Primera vez: subir productos default a Firebase
         await window.subirProductosDefault();
       }
     } catch(e) {
-      console.log('Firebase error, usando local:', e);
-      renderProducts();
+      console.log('Firebase error:', e);
+      if (window.renderProducts) window.renderProducts();
     }
   };
 
   window.subirProductosDefault = async function() {
-    for (let i = 0; i < window.defaultProducts.length; i++) {
-      const p = window.defaultProducts[i];
-      await setDoc(doc(db, 'productos', String(p.id)), { ...p, orden: i });
-    }
+    const batch = db.batch();
+    window.defaultProducts.forEach((p, i) => {
+      const ref = db.collection('productos').doc(String(p.id));
+      batch.set(ref, { ...p, orden: i });
+    });
+    await batch.commit();
     window.products = [...window.defaultProducts];
-    renderProducts();
+    products = [...window.defaultProducts];
+    if (window.renderProducts) window.renderProducts();
   };
 
   window.guardarProductoFirebase = async function(producto) {
     try {
-      await setDoc(doc(db, 'productos', String(producto.id)), producto);
+      await db.collection('productos').doc(String(producto.id)).set(producto);
       return true;
     } catch(e) {
-      console.error('Error guardando en Firebase:', e);
+      console.error('Error guardando:', e);
       return false;
     }
   };
-
-  // Iniciar carga
-  window.addEventListener('load', () => {
-    // Esperar que el script principal defina renderProducts
-    setTimeout(() => window.cargarProductosFirebase(), 300);
-  });
+</script>
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
