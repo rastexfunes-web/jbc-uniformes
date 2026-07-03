@@ -416,9 +416,12 @@ function renderProducts() {
       <div class="product-body">
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.desc}</div>
-        <div class="product-price">$ ${p.price.toLocaleString('es-AR')}</div>
+        <div class="product-price">
+          <div style="font-size:13px;font-family:'Inter',sans-serif;font-weight:600;color:var(--gray)">Talles 2-14: <span style="color:var(--blue)">$ ${p.price.toLocaleString('es-AR')}</span></div>
+          <div style="font-size:13px;font-family:'Inter',sans-serif;font-weight:600;color:var(--gray)">Talles 16-XXXL: <span style="color:var(--blue)">$ ${(p.priceAdult || p.price).toLocaleString('es-AR')}</span></div>
+        </div>
         <div class="product-controls">
-          <select class="size-select" id="size-${p.id}">
+          <select class="size-select" id="size-${p.id}" onchange="updatePrice('${p.id}', this.value)">
             <option value="">— Talle —</option>
             ${p.sizes.map(s=>`<option value="${s}">${s}</option>`).join('')}
           </select>
