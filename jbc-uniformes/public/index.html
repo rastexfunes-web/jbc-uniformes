@@ -435,7 +435,7 @@ function renderProducts() {
 }
 
 function updatePrice(productId, size) {
-  const product = products.find(p => p.id === productId);
+  const product = products.find(p => String(p.id) === String(productId));
   if (!product || !size) return;
   const price = TALLES_ADULTOS.includes(size) ? (product.priceAdult || product.price) : product.price;
   const display = document.getElementById(`price-display-${productId}`);
@@ -448,12 +448,12 @@ function changeQty(id, delta) {
 }
 
 function addToCart(productId) {
-  const product = products.find(p => p.id === productId);
+  const product = products.find(p => String(p.id) === String(productId));
   const size = document.getElementById(`size-${productId}`).value;
   const qty  = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
   if (!size) { showToast('⚠️ Elegí un talle'); return; }
   const price = TALLES_ADULTOS.includes(size) ? (product.priceAdult || product.price) : product.price;
-  const existing = cart.find(i => i.id === productId && i.size === size);
+  const existing = cart.find(i => String(i.id) === String(productId) && i.size === size);
   if (existing) existing.qty += qty;
   else cart.push({ ...product, price, size, qty });
   updateCartUI();
