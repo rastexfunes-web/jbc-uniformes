@@ -368,7 +368,8 @@
 
   // Iniciar carga
   window.addEventListener('load', () => {
-    window.cargarProductosFirebase();
+    // Esperar que el script principal defina renderProducts
+    setTimeout(() => window.cargarProductosFirebase(), 300);
   });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -798,10 +799,24 @@ async function saveAdminChanges() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-// Los productos se cargan desde Firebase via el módulo de arriba
-// Si Firebase no carga, renderProducts() usa los defaults
+window.renderProducts = renderProducts;
+
+// Intentar cargar desde Firebase, si no usar defaults
+if (window.cargarProductosFirebase) {
+  window.cargarProductosFirebase();
+} else {
+  // Firebase todavía no cargó, esperar un poco
+  setTimeout(() => {
+    if (window.cargarProductosFirebase) {
+      window.cargarProductosFirebase();
+    } else {
+      renderProducts();
+    }
+  }, 1000);
+}
+
 if (window.location.search.includes('admin')) {
-  setTimeout(() => openAdmin(), 500);
+  setTimeout(() => openAdmin(), 800);
 }
 </script>
 </body>
