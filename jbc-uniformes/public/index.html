@@ -598,7 +598,23 @@ function mostrarInfoPago(order) {
 
 function sendWhatsApp() {
   if (!lastOrder) return;
-  const metodoTxt = lastOrder.metodoPago === 'mp' ? '📱 Mercado Pago' : lastOrder.metodoPago === 'cuotas' ? '📅 3 Cuotas' : '💳 Transferencia';
+  const total = lastOrder.total;
+  const totalCuotas = Math.round(total * 1.20);
+  const cuotaValor = Math.round(totalCuotas / 3);
+
+  let pagoInfo = '';
+  if (lastOrder.metodoPago === 'transferencia') {
+    pagoInfo = `💳 *Forma de pago:* Transferencia bancaria\n💰 *Importe:* $ ${total.toLocaleString('es-AR')}`;
+  } else if (lastOrder.metodoPago === 'cuotas') {
+    if (total >= 50000) {
+      pagoInfo = `📅 *Forma de pago:* 3 cuotas sin interés (supera $50.000)\n💰 *Importe por cuota:* $ ${Math.round(total/3).toLocaleString('es-AR')} x 3 = $ ${total.toLocaleString('es-AR')}`;
+    } else {
+      pagoInfo = `📅 *Forma de pago:* 3 cuotas con 20% adicional\n💰 *Importe por cuota:* $ ${cuotaValor.toLocaleString('es-AR')} x 3 = $ ${totalCuotas.toLocaleString('es-AR')}`;
+    }
+  } else {
+    pagoInfo = `📱 *Forma de pago:* Mercado Pago\n💰 *Importe:* $ ${total.toLocaleString('es-AR')}`;
+  }
+
   const itemLines = lastOrder.items.map(i=>`  • ${i.name} | Talle: ${i.size} | Cant: ${i.qty} | $ ${(i.price*i.qty).toLocaleString('es-AR')}`).join('\n');
   const msg =
 `🛒 *NUEVO PEDIDO - Uniformes Colegio Rosario*
@@ -607,12 +623,11 @@ function sendWhatsApp() {
 
 👤 *Cliente:* ${lastOrder.nombre}
 📞 *Teléfono:* ${lastOrder.telefono}
-💰 *Forma de pago:* ${metodoTxt}
 
 📦 *Detalle:*
 ${itemLines}
 
-💰 *TOTAL: $ ${lastOrder.total.toLocaleString('es-AR')}*`;
+${pagoInfo}`;
   window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
