@@ -382,6 +382,8 @@ const TALLES_NINOS = ["2","4","6","8","10","12","14"];
 const TALLES_ADULTOS = ["16","S","M","L","XL","XXL","XXXL"];
 const TODOS_TALLES = [...TALLES_NINOS, ...TALLES_ADULTOS];
 
+window.TALLES_ADULTOS = TALLES_ADULTOS;
+
 const defaultProducts = [
   { id:1, name:"Remera Polo Institucional", desc:"100% algodón piqué, logo bordado", price:18500, priceAdult:21000, emoji:"👕", photo:null, sizes:TODOS_TALLES },
   { id:2, name:"Pantalón de Jogging", desc:"Frisa doble, con cordón y bolsillos", price:24000, priceAdult:27000, emoji:"👖", photo:null, sizes:TODOS_TALLES },
@@ -390,8 +392,10 @@ const defaultProducts = [
   { id:5, name:"Short Deportivo", desc:"Microfibra, elástico reforzado", price:15000, priceAdult:18000, emoji:"🩳", photo:null, sizes:TODOS_TALLES },
   { id:6, name:"Set Completo (Remera + Pantalón)", desc:"Combiná cualquier color institucional", price:38000, priceAdult:44000, emoji:"🎽", photo:null, sizes:TODOS_TALLES }
 ];
+window.defaultProducts = defaultProducts;
 
 let products = loadProducts();
+window.products = products;
 let cart = [];
 let lastOrder = null;
 let metodoPagoSeleccionado = 'transferencia';
@@ -413,6 +417,7 @@ function saveProducts() {
 }
 
 function renderProducts() {
+  window.products = products;
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
   grid.innerHTML = products.map(p => `
