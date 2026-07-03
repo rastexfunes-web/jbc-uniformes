@@ -441,6 +441,7 @@ function updatePrice(productId, size) {
   const display = document.getElementById(`price-display-${productId}`);
   if (display) display.textContent = `$ ${price.toLocaleString('es-AR')}`;
 }
+window.updatePrice = updatePrice;
 
 function changeQty(id, delta) {
   const input = document.getElementById(`qty-${id}`);
@@ -788,7 +789,29 @@ async function saveAdminChanges() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+// Exponer funciones globalmente para que el HTML pueda llamarlas
 window.renderProducts = renderProducts;
+window.updatePrice = updatePrice;
+window.changeQty = changeQty;
+window.addToCart = addToCart;
+window.removeFromCart = removeFromCart;
+window.toggleCart = toggleCart;
+window.openCheckout = openCheckout;
+window.closeCheckout = closeCheckout;
+window.selectPago = selectPago;
+window.confirmOrder = confirmOrder;
+window.sendWhatsApp = sendWhatsApp;
+window.newOrder = newOrder;
+window.cancelarCompra = cancelarCompra;
+window.copiar = copiar;
+window.openAdmin = openAdmin;
+window.closeAdmin = closeAdmin;
+window.checkAdminPass = checkAdminPass;
+window.addNewProduct = addNewProduct;
+window.deleteProduct = deleteProduct;
+window.handlePhotoUpload = handlePhotoUpload;
+window.removePhoto = removePhoto;
+window.saveAdminChanges = saveAdminChanges;
 
 // Intentar cargar desde Firebase, si no usar defaults
 if (window.cargarProductosFirebase) {
