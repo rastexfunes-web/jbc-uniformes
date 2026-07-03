@@ -305,6 +305,72 @@
 
 <div class="toast" id="toast"></div>
 
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOAf9OF9JaRHswEv6naZHvWs9nfhG1R1Y",
+    authDomain: "colegio-rosario.firebaseapp.com",
+    projectId: "colegio-rosario",
+    storageBucket: "colegio-rosario.firebasestorage.app",
+    messagingSenderId: "636439702755",
+    appId: "1:636439702755:web:a65486eaa732a7269529d6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.db = db;
+  window.firestoreSetDoc = setDoc;
+  window.firestoreDoc = doc;
+  window.firestoreCollection = collection;
+  window.firestoreGetDocs = getDocs;
+
+  // Cargar productos desde Firebase
+  window.cargarProductosFirebase = async function() {
+    try {
+      const snapshot = await getDocs(collection(db, 'productos'));
+      if (!snapshot.empty) {
+        const prods = [];
+        snapshot.forEach(d => prods.push({ id: d.id, ...d.data() }));
+        // Ordenar por orden
+        prods.sort((a,b) => (a.orden||0) - (b.orden||0));
+        window.products = prods;
+        renderProducts();
+      } else {
+        // Primera vez: subir productos default a Firebase
+        await window.subirProductosDefault();
+      }
+    } catch(e) {
+      console.log('Firebase error, usando local:', e);
+      renderProducts();
+    }
+  };
+
+  window.subirProductosDefault = async function() {
+    for (let i = 0; i < window.defaultProducts.length; i++) {
+      const p = window.defaultProducts[i];
+      await setDoc(doc(db, 'productos', String(p.id)), { ...p, orden: i });
+    }
+    window.products = [...window.defaultProducts];
+    renderProducts();
+  };
+
+  window.guardarProductoFirebase = async function(producto) {
+    try {
+      await setDoc(doc(db, 'productos', String(producto.id)), producto);
+      return true;
+    } catch(e) {
+      console.error('Error guardando en Firebase:', e);
+      return false;
+    }
+  };
+
+  // Iniciar carga
+  window.addEventListener('load', () => {
+    window.cargarProductosFirebase();
+  });
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const ADMIN_PASS = 'jbc2024';
@@ -459,10 +525,13 @@ function selectPago(metodo) {
     document.getElementById('optCuotas').classList.add('active');
     resumenCuotas.style.display = 'block';
     if (total >= 50000) {
+      const cuotaValorSinInteres = Math.round(total / 3);
       document.getElementById('resumenCuotasContenido').innerHTML =
         `🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br>
-        💰 <strong>$ ${cuotaValor.toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong>`;
+        💰 <strong>$ ${cuotaValorSinInteres.toLocaleString('es-AR')} x 3 cuotas = $ ${total.toLocaleString('es-AR')}</strong>`;
     } else {
+      const totalCuotas = Math.round(total * 1.20);
+      const cuotaValor = Math.round(totalCuotas / 3);
       document.getElementById('resumenCuotasContenido').innerHTML =
         `📅 <strong>3 cuotas con el 20% adicional</strong><br>
         💰 <strong>$ ${cuotaValor.toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong>`;
@@ -693,7 +762,7 @@ function removePhoto(productId) {
   if (idx !== -1) { products[idx].photo = null; renderAdminPanel(); showToast('Foto eliminada'); }
 }
 
-function saveAdminChanges() {
+async function saveAdminChanges() {
   products.forEach(p => {
     const name  = document.getElementById(`admin-name-${p.id}`)?.value.trim();
     const desc  = document.getElementById(`admin-desc-${p.id}`)?.value.trim();
@@ -707,14 +776,28 @@ function saveAdminChanges() {
     if (url) p.photo = url;
     else if (!url && p.photo && p.photo.startsWith('http')) p.photo = null;
   });
-  saveProducts(); renderProducts();
-  showToast('✅ Cambios guardados');
+
+  // Guardar en Firebase
+  let savedOk = true;
+  for (const p of products) {
+    if (window.guardarProductoFirebase) {
+      const ok = await window.guardarProductoFirebase(p);
+      if (!ok) savedOk = false;
+    }
+  }
+
+  saveProducts();
+  renderProducts();
+  showToast(savedOk ? '✅ Cambios guardados en la nube' : '⚠️ Error al guardar en la nube');
   setTimeout(() => closeAdmin(), 800);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-renderProducts();
-if (window.location.search.includes('admin')) openAdmin();
+// Los productos se cargan desde Firebase via el módulo de arriba
+// Si Firebase no carga, renderProducts() usa los defaults
+if (window.location.search.includes('admin')) {
+  setTimeout(() => openAdmin(), 500);
+}
 </script>
 </body>
 </html>
