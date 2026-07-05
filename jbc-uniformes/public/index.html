@@ -423,7 +423,12 @@ function renderProducts() {
         <div class="product-controls">
           <select class="size-select" id="size-${p.id}" onchange="updatePrice('${p.id}', this.value)">
             <option value="">— Talle —</option>
-            ${p.sizes.map(s=>`<option value="${s}">${s}</option>`).join('')}
+            ${p.sizes.map(s => {
+              const stock = p.stock && p.stock[s] !== null && p.stock[s] !== undefined ? p.stock[s] : null;
+              const sinStock = stock !== null && stock === 0;
+              const label = stock !== null ? (stock === 0 ? `${s} — Sin stock` : `${s} — Stock: ${stock}`) : s;
+              return `<option value="${s}" ${sinStock ? 'disabled' : ''}>${label}</option>`;
+            }).join('')}
           </select>
           <div class="qty-row">
             <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
@@ -456,6 +461,13 @@ function addToCart(productId) {
   const size = document.getElementById(`size-${productId}`).value;
   const qty  = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
   if (!size) { showToast('⚠️ Elegí un talle'); return; }
+  // Verificar stock
+  if (product.stock && product.stock[size] !== null && product.stock[size] !== undefined) {
+    const stockDisponible = product.stock[size];
+    const enCarrito = cart.filter(i => String(i.id) === String(productId) && i.size === size).reduce((s,i)=>s+i.qty,0);
+    if (stockDisponible === 0) { showToast('❌ Sin stock para este talle'); return; }
+    if (enCarrito + qty > stockDisponible) { showToast(`⚠️ Solo quedan ${stockDisponible - enCarrito} unidades`); return; }
+  }
   const price = TALLES_ADULTOS.includes(size) ? (product.priceAdult || product.price) : product.price;
   const existing = cart.find(i => String(i.id) === String(productId) && i.size === size);
   if (existing) existing.qty += qty;
@@ -564,7 +576,17 @@ function confirmOrder() {
   document.getElementById('successModal').classList.add('open');
   registrarEnSheets(lastOrder);
   mostrarInfoPago(lastOrder);
+  descontarStock(lastOrder.items);
   if (metodoPagoSeleccionado === 'mp') setTimeout(() => window.open(MP_LINK, '_blank'), 500);
+}
+
+async function descontarStock(items) {
+  for (const item of items) {
+    const product = products.find(p => String(p.id) === String(item.id));
+    if (!product || !product.stock || product.stock[item.size] === null || product.stock[item.size] === undefined) continue;
+    product.stock[item.size] = Math.max(0, product.stock[item.size] - item.qty);
+    if (window.guardarProductoFirebase) await window.guardarProductoFirebase(product);
+  }
 }
 
 function mostrarInfoPago(order) {
@@ -707,6 +729,7 @@ function checkAdminPass() {
 
 function renderAdminPanel() {
   const list = document.getElementById('adminProductList');
+  const TALLES = ["2","4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"];
   list.innerHTML = products.map(p => `
     <div class="product-admin-card" id="card-${p.id}">
       <div class="admin-img-area">
@@ -730,7 +753,18 @@ function renderAdminPanel() {
           <input class="admin-input" type="text" id="admin-emoji-${p.id}" value="${p.emoji}" placeholder="Emoji">
         </div>
         <input class="admin-input" type="text" id="admin-url-${p.id}" value="${p.photo && p.photo.startsWith('http') ? p.photo : ''}" placeholder="URL de imagen (ej: https://i.imgur.com/...)">
-        <button class="upload-photo-btn" style="background:var(--red);width:100%;padding:8px;margin-top:4px" onclick="deleteProduct(${p.id})">🗑️ Eliminar producto</button>
+        <details style="margin-top:8px">
+          <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--admin);padding:6px 0">📦 Stock por talle</summary>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
+            ${TALLES.map(t => `
+              <div style="text-align:center">
+                <div style="font-size:11px;font-weight:600;color:var(--gray)">${t}</div>
+                <input class="admin-input" type="number" min="0" id="stock-${p.id}-${t}" value="${(p.stock && p.stock[t] !== undefined) ? p.stock[t] : ''}" placeholder="0" style="text-align:center;padding:4px">
+              </div>
+            `).join('')}
+          </div>
+        </details>
+        <button class="upload-photo-btn" style="background:var(--red);width:100%;padding:8px;margin-top:8px" onclick="deleteProduct(${p.id})">🗑️ Eliminar producto</button>
       </div>
     </div>
   `).join('');
@@ -789,6 +823,13 @@ async function saveAdminChanges() {
     p.price = price; p.priceAdult = priceAdult; p.emoji = emoji;
     if (url) p.photo = url;
     else if (!url && p.photo && p.photo.startsWith('http')) p.photo = null;
+    // Guardar stock por talle
+    const TALLES = ["2","4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"];
+    p.stock = {};
+    TALLES.forEach(t => {
+      const val = document.getElementById(`stock-${p.id}-${t}`)?.value;
+      p.stock[t] = val !== '' && val !== undefined ? parseInt(val) : null;
+    });
   });
 
   // Guardar en Firebase
