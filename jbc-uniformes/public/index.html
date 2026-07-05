@@ -6,33 +6,34 @@
 <title>Uniformes Colegio Rosario</title>
 <meta name="google-site-verification" content="rK6mE4dNpJhXRBI6jCONAkv4ddNWp4WnM54kbyf8xeQ" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
   :root {
-    --navy: #3D0014;
-    --blue: #7A0028;
-    --sky: #F5E6EA;
+    --navy: #2A000E;
+    --blue: #8B0030;
+    --sky: #FDF0F3;
     --white: #FFFFFF;
     --gray: #6B7280;
-    --light: #F7F7F7;
-    --border: #E0D5D8;
+    --light: #FAFAFA;
+    --border: #EDD5DC;
     --green: #16A34A;
     --red: #DC2626;
     --accent: #D4D4D4;
     --admin: #7C3AED;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--navy); min-height: 100vh; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light); color: var(--navy); min-height: 100vh; }
 
   header {
-    background: var(--navy); color: white; padding: 0 24px;
+    background: #2A000E; color: white; padding: 0 32px;
     display: flex; align-items: center; justify-content: center;
-    height: 64px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3); gap: 24px;
+    height: 68px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(42,0,14,0.4); gap: 24px;
+    backdrop-filter: blur(10px);
   }
-  .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: 2px; }
+  .logo { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: 2px; }
   .logo span { color: #D4D4D4; }
   .cart-btn {
     background: var(--blue); color: white; border: none; padding: 10px 18px;
@@ -45,42 +46,44 @@
     justify-content: center; font-size: 11px; font-weight: 700;
   }
 
-  .hero { background: linear-gradient(135deg, #3D0014 0%, #7A0028 100%); color: white; padding: 48px 24px; text-align: center; }
+  .hero { background: linear-gradient(145deg, #2A000E 0%, #6B0024 50%, #8B0030 100%); color: white; padding: 56px 24px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(255,255,255,0.05) 0%, transparent 60%); }
   .hero p.sub { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
-  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(32px, 6vw, 56px); font-weight: 800; letter-spacing: 1px; line-height: 1.1; margin-bottom: 12px; }
+  .hero h1 { font-family: 'Outfit', sans-serif; font-size: clamp(32px, 6vw, 56px); font-weight: 800; letter-spacing: 1px; line-height: 1.1; margin-bottom: 12px; }
   .hero h1 span { color: #D4D4D4; }
   .hero p.desc { color: rgba(255,255,255,0.75); font-size: 16px; max-width: 480px; margin: 0 auto; }
 
   .marquee-wrap { background: #7A0028; padding: 10px 0; overflow: hidden; white-space: nowrap; }
   .marquee-inner { display: inline-block; animation: marquee 18s linear infinite; }
-  .marquee-inner span { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; padding: 0 48px; }
+  .marquee-inner span { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; padding: 0 48px; }
   @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.33%); } }
 
   main { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
-  .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 1px; color: var(--navy); margin-bottom: 20px; text-transform: uppercase; border-left: 4px solid var(--blue); padding-left: 12px; }
+  .section-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 1px; color: var(--navy); margin-bottom: 20px; text-transform: uppercase; border-left: 4px solid var(--blue); padding-left: 12px; }
 
   .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px; }
-  .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); transition: box-shadow 0.2s, transform 0.2s; }
-  .product-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  .product-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(42,0,14,0.06); transition: box-shadow 0.25s, transform 0.25s; border: 1px solid var(--border); }
+  .product-card:hover { box-shadow: 0 12px 32px rgba(42,0,14,0.12); transform: translateY(-3px); }
   .product-img { height: 220px; width: 100%; display: flex; align-items: center; justify-content: center; font-size: 56px; background: var(--sky); overflow: hidden; }
   .product-img img { width: 100%; height: 100%; object-fit: contain; background: white; }
   .product-body { padding: 16px; }
   .product-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
   .product-desc { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
-  .product-price { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
+  .product-price { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
   .product-controls { display: flex; flex-direction: column; gap: 8px; }
   .size-select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; color: var(--navy); }
   .qty-row { display: flex; align-items: center; gap: 8px; }
   .qty-btn { background: var(--light); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
   .qty-input { width: 50px; text-align: center; border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 14px; font-weight: 600; }
-  .add-btn { background: var(--blue); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; width: 100%; margin-top: 4px; }
+  .add-btn { background: var(--blue); color: white; border: none; padding: 11px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 700; width: 100%; margin-top: 4px; letter-spacing: 0.5px; transition: background 0.2s, transform 0.1s; }
+  .add-btn:hover { background: var(--navy); transform: scale(1.02); }
 
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-start; justify-content: flex-end; }
   .modal-overlay.open { display: flex; }
   .cart-panel { background: white; width: 100%; max-width: 420px; height: 100vh; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; animation: slideIn 0.25s ease; }
   @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
   .cart-header { display: flex; justify-content: space-between; align-items: center; }
-  .cart-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; }
+  .cart-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; }
   .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--gray); }
   .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 8px; }
   .cart-item-info { flex: 1; }
@@ -95,7 +98,7 @@
   .checkout-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
   .checkout-modal.open { display: flex; }
   .checkout-box { background: white; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-  .checkout-box h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+  .checkout-box h2 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 20px; }
   .form-group { margin-bottom: 14px; }
   .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
   .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; }
@@ -112,7 +115,7 @@
   .success-modal.open { display: flex; }
   .success-box { background: white; border-radius: 16px; padding: 36px 28px; width: 100%; max-width: 420px; text-align: center; max-height: 90vh; overflow-y: auto; }
   .success-icon { font-size: 56px; margin-bottom: 16px; }
-  .success-box h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 10px; color: var(--green); }
+  .success-box h2 { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 10px; color: var(--green); }
   .action-btn { color: white; border: none; padding: 13px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
   .link-btn { background: none; border: none; color: var(--blue); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; text-decoration: underline; display: block; }
   .link-btn-red { background: none; border: none; color: var(--red); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; text-decoration: underline; display: block; }
@@ -123,7 +126,7 @@
   .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: flex-start; justify-content: center; padding: 16px; overflow-y: auto; }
   .admin-modal.open { display: flex; }
   .admin-box { background: white; border-radius: 16px; padding: 28px; width: 100%; max-width: 700px; margin: auto; }
-  .admin-box h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--admin); }
+  .admin-box h2 { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--admin); }
   .admin-subtitle { font-size: 13px; color: var(--gray); margin-bottom: 24px; }
   .admin-login { display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 20px auto; }
   .admin-login input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
@@ -180,8 +183,22 @@
 </div>
 
 <main>
-  <p class="section-title">Catálogo</p>
-  <div class="products-grid" id="productsGrid"></div>
+  <!-- PESTAÑAS -->
+  <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:3px solid var(--border)">
+    <button id="tabUniformes" onclick="switchTab('uniformes')" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;padding:12px 28px;border:none;cursor:pointer;background:var(--blue);color:white;border-radius:8px 8px 0 0;transition:all 0.2s">UNIFORMES</button>
+    <button id="tabLibreria" onclick="switchTab('libreria')" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;padding:12px 28px;border:none;cursor:pointer;background:var(--light);color:var(--gray);border-radius:8px 8px 0 0;transition:all 0.2s">LIBRERÍA</button>
+  </div>
+
+  <!-- UNIFORMES -->
+  <div id="seccionUniformes">
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- LIBRERÍA -->
+  <div id="seccionLibreria" style="display:none">
+    <div class="products-grid" id="libreriaGrid"></div>
+    <p style="color:var(--gray);font-size:14px;text-align:center;padding:40px 0" id="libreriaVacia">Próximamente productos de librería.</p>
+  </div>
 </main>
 
 <!-- CARRITO -->
@@ -502,6 +519,72 @@ function updateCartUI() {
   document.getElementById('totalAmount').textContent = `$ ${total.toLocaleString('es-AR')}`;
   totalDiv.style.display = 'flex'; checkoutBtn.style.display = 'block';
 }
+
+function switchTab(tab) {
+  const isUniformes = tab === 'uniformes';
+  document.getElementById('seccionUniformes').style.display = isUniformes ? 'block' : 'none';
+  document.getElementById('seccionLibreria').style.display = isUniformes ? 'none' : 'block';
+  document.getElementById('tabUniformes').style.background = isUniformes ? 'var(--blue)' : 'var(--light)';
+  document.getElementById('tabUniformes').style.color = isUniformes ? 'white' : 'var(--gray)';
+  document.getElementById('tabLibreria').style.background = isUniformes ? 'var(--light)' : 'var(--blue)';
+  document.getElementById('tabLibreria').style.color = isUniformes ? 'var(--gray)' : 'white';
+}
+window.switchTab = switchTab;
+
+// ─── LIBRERÍA ─────────────────────────────────────────────────────────────────
+let productosLibreria = [];
+
+window.cargarLibreriaFirebase = async function() {
+  try {
+    const snapshot = await db.collection('libreria').orderBy('orden').get();
+    if (!snapshot.empty) {
+      productosLibreria = [];
+      snapshot.forEach(d => productosLibreria.push({ ...d.data(), id: d.id }));
+      renderLibreria();
+    }
+  } catch(e) {
+    console.log('Librería no disponible:', e);
+  }
+};
+
+function renderLibreria() {
+  const grid = document.getElementById('libreriaGrid');
+  const vacia = document.getElementById('libreriaVacia');
+  if (!productosLibreria.length) { if(vacia) vacia.style.display='block'; return; }
+  if(vacia) vacia.style.display='none';
+  grid.innerHTML = productosLibreria.map(p => `
+    <div class="product-card">
+      <div class="product-img">${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.emoji || '📚'}</div>
+      <div class="product-body">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc || ''}</div>
+        <div class="product-price">
+          <div style="font-size:14px;font-family:'Inter',sans-serif;font-weight:600;color:var(--blue)">$ ${p.price.toLocaleString('es-AR')}</div>
+        </div>
+        <div class="product-controls">
+          <div class="qty-row">
+            <button class="qty-btn" onclick="changeQty('lib-${p.id}',-1)">−</button>
+            <input class="qty-input" type="number" id="qty-lib-${p.id}" value="1" min="1" max="99">
+            <button class="qty-btn" onclick="changeQty('lib-${p.id}',1)">+</button>
+          </div>
+          <button class="add-btn" onclick="addLibreriaToCart('${p.id}')">Agregar al pedido</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderLibreria = renderLibreria;
+
+function addLibreriaToCart(productId) {
+  const product = productosLibreria.find(p => String(p.id) === String(productId));
+  const qty = parseInt(document.getElementById(`qty-lib-${productId}`).value) || 1;
+  const existing = cart.find(i => String(i.id) === `lib-${productId}`);
+  if (existing) existing.qty += qty;
+  else cart.push({ ...product, id: `lib-${productId}`, size: 'Único', qty });
+  updateCartUI();
+  showToast('✅ Agregado al pedido');
+}
+window.addLibreriaToCart = addLibreriaToCart;
 
 function toggleCart() { document.getElementById('cartModal').classList.toggle('open'); }
 
@@ -876,7 +959,6 @@ window.saveAdminChanges = saveAdminChanges;
 if (window.cargarProductosFirebase) {
   window.cargarProductosFirebase();
 } else {
-  // Firebase todavía no cargó, esperar un poco
   setTimeout(() => {
     if (window.cargarProductosFirebase) {
       window.cargarProductosFirebase();
@@ -885,6 +967,10 @@ if (window.cargarProductosFirebase) {
     }
   }, 1000);
 }
+
+setTimeout(() => {
+  if (window.cargarLibreriaFirebase) window.cargarLibreriaFirebase();
+}, 600);
 
 if (window.location.search.includes('admin')) {
   setTimeout(() => openAdmin(), 800);
