@@ -294,6 +294,9 @@
       <div id="infoPagoContenido"></div>
     </div>
     <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green);font-size:16px;padding:16px;box-shadow:0 4px 12px rgba(22,163,74,0.4)">📲 Enviar pedido por WhatsApp</button>
+    <div id="btnMercadoPago" style="display:none;margin-top:8px">
+      <button class="action-btn" onclick="window.open('https://link.mercadopago.com.ar/colegiorosario','_blank')" style="background:#009ee3;font-size:15px;padding:14px">💳 Ir a pagar con Mercado Pago</button>
+    </div>
     <br>
     <button class="link-btn" onclick="newOrder()">Hacer otro pedido</button>
     <button class="link-btn-red" onclick="cancelarCompra()">❌ Cancelar compra</button>
@@ -668,7 +671,6 @@ function confirmOrder() {
   registrarEnSheets(lastOrder);
   mostrarInfoPago(lastOrder);
   descontarStock(lastOrder.items);
-  if (metodoPagoSeleccionado === 'mp') setTimeout(() => window.open(MP_LINK, '_blank'), 500);
 }
 
 async function descontarStock(items) {
@@ -686,6 +688,9 @@ function mostrarInfoPago(order) {
   const contenido = document.getElementById('infoPagoContenido');
   const total = order.total;
   const totalCuotas = Math.round(total * 1.20);
+  const btnMP = document.getElementById('btnMercadoPago');
+  if (btnMP) btnMP.style.display = order.metodoPago === 'mp' ? 'block' : 'none';
+
   div.style.display = 'block';
   if (order.metodoPago === 'transferencia') {
     titulo.textContent = '🏦 Datos para transferir:';
@@ -749,6 +754,8 @@ function newOrder() {
   ['clientName','clientPhone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('successModal').classList.remove('open');
   document.getElementById('infoPago').style.display = 'none';
+  const btnMP = document.getElementById('btnMercadoPago');
+  if (btnMP) btnMP.style.display = 'none';
 }
 
 function cancelarCompra() {
