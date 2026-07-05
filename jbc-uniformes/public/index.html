@@ -315,8 +315,16 @@
     </div>
     <div id="adminPanel" style="display:none">
       <div class="product-admin-list" id="adminProductList"></div>
-      <button class="admin-save-btn" onclick="addNewProduct()" style="background:var(--green);margin-top:20px">➕ Agregar nuevo producto</button>
+      <button class="admin-save-btn" onclick="addNewProduct()" style="background:var(--green);margin-top:20px">➕ Agregar producto de Uniformes</button>
       <button class="admin-save-btn" onclick="saveAdminChanges()">💾 Guardar todos los cambios</button>
+
+      <div style="margin-top:28px;border-top:2px solid var(--border);padding-top:20px">
+        <h3 style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--admin);margin-bottom:16px">📚 Librería</h3>
+        <div class="product-admin-list" id="adminLibreriaList"></div>
+        <button class="admin-save-btn" onclick="addNewLibreria()" style="background:var(--green);margin-top:12px">➕ Agregar producto de Librería</button>
+        <button class="admin-save-btn" onclick="saveLibreriaChanges()" style="margin-top:8px">💾 Guardar Librería</button>
+      </div>
+
       <button class="admin-close-btn" onclick="closeAdmin()">Cerrar panel</button>
     </div>
   </div>
@@ -785,13 +793,91 @@ function showToast(msg) {
 }
 
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
+// ─── ADMIN LIBRERÍA ───────────────────────────────────────────────────────────
+function renderAdminLibreria() {
+  const list = document.getElementById('adminLibreriaList');
+  if (!list) return;
+  if (!productosLibreria.length) {
+    list.innerHTML = '<p style="color:var(--gray);font-size:13px;padding:8px 0">No hay productos de librería aún.</p>';
+    return;
+  }
+  list.innerHTML = productosLibreria.map(p => `
+    <div class="product-admin-card" id="lib-card-${p.id}" style="margin-bottom:12px">
+      <div class="admin-img-area">
+        <div class="admin-img-preview">
+          ${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : (p.emoji || '📚')}
+        </div>
+      </div>
+      <div class="admin-fields">
+        <input class="admin-input" type="text" id="lib-name-${p.id}" value="${p.name}" placeholder="Nombre del producto">
+        <input class="admin-input" type="text" id="lib-desc-${p.id}" value="${p.desc || ''}" placeholder="Descripción">
+        <div class="admin-field-row">
+          <input class="admin-input" type="number" id="lib-price-${p.id}" value="${p.price}" placeholder="Precio">
+          <input class="admin-input" type="text" id="lib-emoji-${p.id}" value="${p.emoji || '📚'}" placeholder="Emoji">
+        </div>
+        <input class="admin-input" type="text" id="lib-url-${p.id}" value="${p.photo && p.photo.startsWith('http') ? p.photo : ''}" placeholder="URL de imagen">
+        <button class="upload-photo-btn" style="background:var(--red);width:100%;padding:8px;margin-top:4px" onclick="deleteLibreria('${p.id}')">🗑️ Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderAdminLibreria = renderAdminLibreria;
+
+function addNewLibreria() {
+  const newId = 'lib_' + Date.now();
+  productosLibreria.push({ id: newId, name: 'Nuevo producto', desc: '', price: 0, emoji: '📚', photo: null, orden: productosLibreria.length });
+  renderAdminLibreria();
+  showToast('✅ Producto de librería agregado');
+}
+window.addNewLibreria = addNewLibreria;
+
+async function deleteLibreria(productId) {
+  if (!confirm('¿Eliminar este producto de librería?')) return;
+  productosLibreria = productosLibreria.filter(p => String(p.id) !== String(productId));
+  if (window.db) {
+    try { await db.collection('libreria').doc(String(productId)).delete(); } catch(e) {}
+  }
+  renderAdminLibreria();
+  renderLibreria();
+  showToast('Producto eliminado');
+}
+window.deleteLibreria = deleteLibreria;
+
+async function saveLibreriaChanges() {
+  productosLibreria.forEach((p, i) => {
+    const name  = document.getElementById(`lib-name-${p.id}`)?.value.trim();
+    const desc  = document.getElementById(`lib-desc-${p.id}`)?.value.trim();
+    const price = parseFloat(document.getElementById(`lib-price-${p.id}`)?.value) || 0;
+    const emoji = document.getElementById(`lib-emoji-${p.id}`)?.value.trim() || '📚';
+    const url   = document.getElementById(`lib-url-${p.id}`)?.value.trim();
+    if (name) p.name = name;
+    if (desc !== undefined) p.desc = desc;
+    p.price = price; p.emoji = emoji; p.orden = i;
+    if (url) p.photo = url;
+  });
+
+  let ok = true;
+  for (const p of productosLibreria) {
+    if (window.db) {
+      try { await db.collection('libreria').doc(String(p.id)).set(p); }
+      catch(e) { ok = false; }
+    }
+  }
+  renderLibreria();
+  showToast(ok ? '✅ Librería guardada en la nube' : '⚠️ Error al guardar');
+}
+window.saveLibreriaChanges = saveLibreriaChanges;
+
 function openAdmin() {
   document.getElementById('adminModal').classList.add('open');
   if (!adminUnlocked) {
     document.getElementById('adminLogin').style.display = 'block';
     document.getElementById('adminPanel').style.display = 'none';
     setTimeout(()=>document.getElementById('adminPass').focus(), 100);
-  } else { renderAdminPanel(); }
+  } else {
+    renderAdminPanel();
+    renderAdminLibreria();
+  }
 }
 
 function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
@@ -804,7 +890,7 @@ function checkAdminPass() {
     document.getElementById('adminPanel').style.display = 'block';
     document.getElementById('adminPass').value = '';
     renderAdminPanel();
-  } else {
+    renderAdminLibreria();
     showToast('⚠️ Contraseña incorrecta');
     document.getElementById('adminPass').value = '';
   }
@@ -855,19 +941,23 @@ function renderAdminPanel() {
 
 function addNewProduct() {
   const newId = Date.now();
-  products.push({ id:newId, name:'Nuevo producto', desc:'Descripción', price:0, emoji:'👕', photo:null, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] });
+  const orden = products.length;
+  products.push({ id:newId, name:'Nuevo producto', desc:'Descripción', price:0, priceAdult:0, emoji:'👕', photo:null, orden:orden, sizes:["4","6","8","10","12","14","16","S","M","L","XL","XXL","XXXL"] });
   renderAdminPanel();
   setTimeout(() => {
     const card = document.getElementById(`card-${newId}`);
     if (card) card.scrollIntoView({ behavior:'smooth', block:'center' });
     document.getElementById(`admin-name-${newId}`)?.focus();
   }, 100);
-  showToast('✅ Nuevo producto agregado');
+  showToast('✅ Nuevo producto agregado — completá los datos y guardá');
 }
 
-function deleteProduct(productId) {
+async function deleteProduct(productId) {
   if (!confirm('¿Eliminar este producto?')) return;
-  products = products.filter(p => p.id !== productId);
+  products = products.filter(p => String(p.id) !== String(productId));
+  if (window.db) {
+    try { await db.collection('productos').doc(String(productId)).delete(); } catch(e) {}
+  }
   saveProducts(); renderProducts(); renderAdminPanel();
   showToast('Producto eliminado');
 }
@@ -904,6 +994,7 @@ async function saveAdminChanges() {
     if (name) p.name = name;
     if (desc) p.desc = desc;
     p.price = price; p.priceAdult = priceAdult; p.emoji = emoji;
+    if (p.orden === undefined) p.orden = products.indexOf(p);
     if (url) p.photo = url;
     else if (!url && p.photo && p.photo.startsWith('http')) p.photo = null;
     // Guardar stock por talle
