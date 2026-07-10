@@ -294,6 +294,9 @@
       <div id="infoPagoContenido"></div>
     </div>
     <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green);font-size:16px;padding:16px;box-shadow:0 4px 12px rgba(22,163,74,0.4)">📲 Enviar pedido por WhatsApp</button>
+    <div id="btnMercadoPago" style="display:none;margin-top:8px">
+      <button class="action-btn" onclick="window.open('https://link.mercadopago.com.ar/colegiorosario','_blank')" style="background:#009ee3;font-size:15px;padding:14px">💳 Ir a pagar con Mercado Pago</button>
+    </div>
     <br>
     <button class="link-btn" onclick="newOrder()">Hacer otro pedido</button>
     <button class="link-btn-red" onclick="cancelarCompra()">❌ Cancelar compra</button>
@@ -388,7 +391,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const ADMIN_PASS = 'jbc2024';
+const ADMIN_PASS = 'Colegio2026@';
 const WA_NUMBER  = '5493416850004';
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzDSjPRmizO93pAQ5vKgbUmnmpL6rvGcU2IVQrBSthVvs60K1T2PJta1qwtalgKbUQH/exec';
 const MP_LINK    = 'https://link.mercadopago.com.ar/colegiorosario';
@@ -668,7 +671,6 @@ function confirmOrder() {
   registrarEnSheets(lastOrder);
   mostrarInfoPago(lastOrder);
   descontarStock(lastOrder.items);
-  if (metodoPagoSeleccionado === 'mp') setTimeout(() => window.open(MP_LINK, '_blank'), 500);
 }
 
 async function descontarStock(items) {
@@ -686,6 +688,9 @@ function mostrarInfoPago(order) {
   const contenido = document.getElementById('infoPagoContenido');
   const total = order.total;
   const totalCuotas = Math.round(total * 1.20);
+  const btnMP = document.getElementById('btnMercadoPago');
+  if (btnMP) btnMP.style.display = order.metodoPago === 'mp' ? 'block' : 'none';
+
   div.style.display = 'block';
   if (order.metodoPago === 'transferencia') {
     titulo.textContent = '🏦 Datos para transferir:';
@@ -699,7 +704,8 @@ function mostrarInfoPago(order) {
   } else if (order.metodoPago === 'cuotas') {
     titulo.textContent = '📅 Pago en 3 cuotas:';
     if (total >= 50000) {
-      contenido.innerHTML = `🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br><br>💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 = $ ${totalCuotas.toLocaleString('es-AR')}</strong><br><br>⏳ En breve te enviamos el link de pago.`;
+      const cuotaSinInteres = Math.round(total / 3);
+      contenido.innerHTML = `🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br><br>💰 <strong>$ ${cuotaSinInteres.toLocaleString('es-AR')} x 3 = $ ${total.toLocaleString('es-AR')}</strong><br><br>⏳ En breve te enviamos el link de pago.`;
     } else {
       contenido.innerHTML = `💰 <strong>$ ${Math.round(totalCuotas/3).toLocaleString('es-AR')} x 3 cuotas = $ ${totalCuotas.toLocaleString('es-AR')}</strong> (+20%)<br><br>⏳ En breve te enviamos el link de pago.`;
     }
@@ -749,6 +755,8 @@ function newOrder() {
   ['clientName','clientPhone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('successModal').classList.remove('open');
   document.getElementById('infoPago').style.display = 'none';
+  const btnMP = document.getElementById('btnMercadoPago');
+  if (btnMP) btnMP.style.display = 'none';
 }
 
 function cancelarCompra() {
