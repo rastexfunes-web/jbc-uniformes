@@ -297,7 +297,7 @@ let adminUnlocked = false;
 // ─── FIREBASE FUNCIONES ───────────────────────────────────────────────────────
 async function cargarProductosFirebase() {
   try {
-    const snapshot = await db.collection('productos').orderBy('orden').get();
+    const snapshot = await db.collection('productos').get();
     if (!snapshot.empty) {
       const prods = [];
       snapshot.forEach(d => prods.push({ ...d.data(), id: isNaN(d.id) ? d.id : Number(d.id) }));
@@ -335,7 +335,7 @@ async function guardarProductoFirebase(producto) {
 
 async function cargarLibreriaFirebase() {
   try {
-    const snapshot = await db.collection('libreria').orderBy('orden').get();
+    const snapshot = await db.collection('libreria').get();
     if (!snapshot.empty) {
       productosLibreria = [];
       snapshot.forEach(d => productosLibreria.push({ ...d.data(), id: d.id }));
