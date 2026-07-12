@@ -71,7 +71,7 @@
   .cart-item-price { font-weight: 700; color: var(--blue); white-space: nowrap; }
   .remove-item { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; padding: 4px; }
   .cart-empty { text-align: center; color: var(--gray); padding: 40px 0; font-size: 14px; }
-  .cart-total { background: var(--sky); padding: 16px; border-radius: 10px; display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; }
+  .cart-total { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; padding: 18px 20px; border-radius: 14px; display: flex; justify-content: space-between; font-weight: 800; font-size: 20px; box-shadow: 0 4px 16px rgba(42,0,14,0.2); }
   .checkout-btn { background: var(--green); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
   .checkout-modal { display: none; position: fixed; inset: 0; background: rgba(42,0,14,0.7); z-index: 300; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
   .checkout-modal.open { display: flex; }
@@ -186,7 +186,7 @@
 <!-- CHECKOUT -->
 <div class="checkout-modal" id="checkoutModal">
   <div class="checkout-box">
-    <h2>Datos del pedido</h2>
+    <h2>🛍️ Datos del pedido</h2>
     <p class="checkout-subtitle">Completá tus datos para finalizar la compra</p>
     <div class="form-group"><label>Nombre completo *</label><input type="text" id="clientName" placeholder="Tu nombre y apellido"></div>
     <div class="form-group"><label>Teléfono (WhatsApp) *</label><input type="tel" id="clientPhone" placeholder="Ej: 341 123 4567"></div>
@@ -217,14 +217,14 @@
 <div class="success-modal" id="successModal">
   <div class="success-box">
     <div class="success-icon">✅</div>
-    <h2>¡Pedido registrado!</h2>
-    <p id="orderNumberDisplay" style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--blue);margin:8px 0"></p>
+    <h2>¡Pedido confirmado!</h2>
+    <div id="orderNumberDisplay" style="display:inline-block;background:var(--navy);color:white;font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;padding:8px 22px;border-radius:100px;margin:12px 0;letter-spacing:1px"></div>
     <p style="font-size:14px;color:var(--gray);margin-bottom:8px">¡Muchas gracias por tu compra! 🙌</p>
     <div id="infoPago" class="info-pago" style="display:none">
       <h4 id="infoPagoTitulo"></h4>
       <div id="infoPagoContenido"></div>
     </div>
-    <button class="action-btn" onclick="sendWhatsApp()" style="background:var(--green);font-size:16px;padding:16px;box-shadow:0 4px 12px rgba(22,163,74,0.4)">📲 Enviar pedido por WhatsApp</button>
+    <button class="action-btn" onclick="sendWhatsApp()" style="background:linear-gradient(135deg,#16A34A,#15803d);font-size:16px;padding:18px;box-shadow:0 6px 20px rgba(22,163,74,0.35);border-radius:14px;letter-spacing:0.3px">📲 Enviar pedido por WhatsApp</button>
     <div id="btnMercadoPago" style="display:none;margin-top:8px">
       <button class="action-btn" onclick="window.open('https://link.mercadopago.com.ar/colegiorosario','_blank')" style="background:#009ee3;font-size:15px;padding:14px">💳 Ir a pagar con Mercado Pago</button>
     </div>
