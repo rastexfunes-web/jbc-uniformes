@@ -73,31 +73,37 @@
   .cart-empty { text-align: center; color: var(--gray); padding: 40px 0; font-size: 14px; }
   .cart-total { background: var(--sky); padding: 16px; border-radius: 10px; display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; }
   .checkout-btn { background: var(--green); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
-  .checkout-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
+  .checkout-modal { display: none; position: fixed; inset: 0; background: rgba(42,0,14,0.7); z-index: 300; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
   .checkout-modal.open { display: flex; }
-  .checkout-box { background: white; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-  .checkout-box h2 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 20px; }
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; }
-  .transfer-box { background: var(--sky); border: 2px dashed var(--blue); border-radius: 10px; padding: 16px; margin: 16px 0; }
-  .transfer-box h3 { font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 10px; }
-  .transfer-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; align-items: center; }
-  .transfer-row span:first-child { color: var(--gray); }
-  .transfer-row span:last-child { font-weight: 600; }
-  .copy-btn { background: var(--blue); color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-left: 8px; }
-  .confirm-btn { background: var(--green); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
-  .cancel-btn { background: var(--light); color: var(--gray); border: 1px solid var(--border); padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
-  .success-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 400; align-items: center; justify-content: center; padding: 16px; }
+  .checkout-box { background: white; border-radius: 20px; padding: 32px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(42,0,14,0.3); }
+  .checkout-box h2 { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
+  .checkout-box .checkout-subtitle { font-size: 13px; color: var(--gray); margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); }
+  .form-group input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit; transition: border-color 0.2s; }
+  .form-group input:focus { outline: none; border-color: var(--blue); }
+  .transfer-box { background: linear-gradient(135deg, var(--sky) 0%, #fff 100%); border: 2px solid var(--border); border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .transfer-box h3 { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .transfer-row { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; align-items: center; border-bottom: 1px solid var(--border); }
+  .transfer-row:last-child { border-bottom: none; }
+  .transfer-row span:first-child { color: var(--gray); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .transfer-row span:last-child { font-weight: 700; }
+  .copy-btn { background: var(--blue); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 8px; transition: background 0.2s; }
+  .copy-btn:hover { background: var(--navy); }
+  .confirm-btn { background: linear-gradient(135deg, #16A34A, #15803d); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 16px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(22,163,74,0.3); transition: all 0.2s; }
+  .confirm-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(22,163,74,0.4); }
+  .cancel-btn { background: transparent; color: var(--gray); border: none; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 4px; text-decoration: underline; }
+  .success-modal { display: none; position: fixed; inset: 0; background: rgba(42,0,14,0.7); z-index: 400; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
   .success-modal.open { display: flex; }
-  .success-box { background: white; border-radius: 16px; padding: 36px 28px; width: 100%; max-width: 420px; text-align: center; max-height: 90vh; overflow-y: auto; }
-  .success-icon { font-size: 56px; margin-bottom: 16px; }
-  .success-box h2 { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 10px; color: var(--green); }
-  .action-btn { color: white; border: none; padding: 13px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
+  .success-box { background: white; border-radius: 24px; padding: 40px 32px; width: 100%; max-width: 440px; text-align: center; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(42,0,14,0.3); }
+  .success-icon { font-size: 64px; margin-bottom: 8px; }
+  .success-box h2 { font-family: 'Outfit', sans-serif; font-size: 30px; font-weight: 800; margin-bottom: 4px; color: var(--green); }
+  .action-btn { color: white; border: none; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; transition: all 0.2s; letter-spacing: 0.3px; }
+  .action-btn:hover { transform: translateY(-1px); }
   .link-btn { background: none; border: none; color: var(--blue); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; text-decoration: underline; display: block; }
-  .link-btn-red { background: none; border: none; color: var(--red); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; text-decoration: underline; display: block; }
-  .info-pago { background: #fff8e1; border: 2px solid #D4D4D4; border-radius: 10px; padding: 14px; margin: 12px 0; text-align: left; font-size: 13px; }
-  .info-pago h4 { font-weight: 700; margin-bottom: 8px; }
+  .link-btn-red { background: none; border: none; color: var(--red); font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 6px; text-decoration: underline; display: block; }
+  .info-pago { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac; border-radius: 14px; padding: 18px; margin: 16px 0; text-align: left; font-size: 13px; }
+  .info-pago h4 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; margin-bottom: 10px; color: var(--navy); }
   .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: flex-start; justify-content: center; padding: 16px; overflow-y: auto; }
   .admin-modal.open { display: flex; }
   .admin-box { background: white; border-radius: 16px; padding: 28px; width: 100%; max-width: 700px; margin: auto; }
@@ -119,9 +125,10 @@
   .admin-close-btn { background: var(--light); color: var(--gray); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: white; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .pay-options { display: flex; gap: 8px; margin-top: 6px; }
-  .pay-option { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; }
-  .pay-option.active { border-color: var(--blue); background: var(--sky); }
+  .pay-options { display: flex; gap: 8px; margin-top: 8px; }
+  .pay-option { flex: 1; border: 2px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.2s; }
+  .pay-option:hover { border-color: var(--blue); background: var(--sky); }
+  .pay-option.active { border-color: var(--blue); background: var(--sky); color: var(--blue); box-shadow: 0 2px 8px rgba(139,0,48,0.15); }
   @media (max-width: 480px) {
     .cart-panel { max-width: 100%; }
     .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -180,6 +187,7 @@
 <div class="checkout-modal" id="checkoutModal">
   <div class="checkout-box">
     <h2>Datos del pedido</h2>
+    <p class="checkout-subtitle">Completá tus datos para finalizar la compra</p>
     <div class="form-group"><label>Nombre completo *</label><input type="text" id="clientName" placeholder="Tu nombre y apellido"></div>
     <div class="form-group"><label>Teléfono (WhatsApp) *</label><input type="tel" id="clientPhone" placeholder="Ej: 341 123 4567"></div>
     <div class="form-group">
