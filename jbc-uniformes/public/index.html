@@ -547,6 +547,7 @@ function confirmOrder() {
   registrarEnSheets(lastOrder);
   mostrarInfoPago(lastOrder);
   descontarStock(lastOrder.items);
+  setTimeout(() => sendWhatsApp(), 600);
 }
 
 async function descontarStock(items) {
