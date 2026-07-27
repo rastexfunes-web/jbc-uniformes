@@ -153,9 +153,9 @@
 
 <div class="marquee-wrap">
   <div class="marquee-inner">
-    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $50.000</span>
-    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $50.000</span>
-    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $50.000</span>
+    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $100.000</span>
+    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $100.000</span>
+    <span>🎉 3 CUOTAS SIN INTERÉS en compras mayores a $100.000</span>
   </div>
 </div>
 
@@ -517,9 +517,9 @@ function selectPago(metodo) {
   } else if (metodo === 'cuotas') {
     document.getElementById('optCuotas').classList.add('active');
     document.getElementById('resumenCuotas').style.display = 'block';
-    if (total >= 50000) {
+    if (total >= 100000) {
       const cuota = Math.round(total / 3);
-      document.getElementById('resumenCuotasContenido').innerHTML = '🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br>💰 <strong>$ ' + cuota.toLocaleString('es-AR') + ' x 3 cuotas = $ ' + total.toLocaleString('es-AR') + '</strong>';
+      document.getElementById('resumenCuotasContenido').innerHTML = '🎉 <strong>3 cuotas sin interés</strong> por superar $100.000<br>💰 <strong>$ ' + cuota.toLocaleString('es-AR') + ' x 3 cuotas = $ ' + total.toLocaleString('es-AR') + '</strong>';
     } else {
       const totalC = Math.round(total * 1.20);
       const cuota  = Math.round(totalC / 3);
@@ -569,9 +569,9 @@ function mostrarInfoPago(order) {
     contenido.innerHTML = '<strong>Titular:</strong> RASTEX S.R.L.<br><strong>CBU:</strong> 0070220320000007504073<br><strong>Alias:</strong> raster.complejo<br><strong>CUIT:</strong> 33-71910663-9<br><br>💰 <strong>Importe: $ ' + total.toLocaleString('es-AR') + '</strong>';
   } else if (order.metodoPago === 'cuotas') {
     titulo.textContent = '📅 Pago en 3 cuotas:';
-    if (total >= 50000) {
+    if (total >= 100000) {
       const cuota = Math.round(total / 3);
-      contenido.innerHTML = '🎉 <strong>3 cuotas sin interés</strong> por superar $50.000<br><br>💰 <strong>$ ' + cuota.toLocaleString('es-AR') + ' x 3 = $ ' + total.toLocaleString('es-AR') + '</strong><br><br>⏳ <strong>En breve te enviamos el link de pago por WhatsApp.</strong>';
+      contenido.innerHTML = '🎉 <strong>3 cuotas sin interés</strong> por superar $100.000<br><br>💰 <strong>$ ' + cuota.toLocaleString('es-AR') + ' x 3 = $ ' + total.toLocaleString('es-AR') + '</strong><br><br>⏳ <strong>En breve te enviamos el link de pago por WhatsApp.</strong>';
     } else {
       const totalC = Math.round(total * 1.20);
       const cuota  = Math.round(totalC / 3);
@@ -590,7 +590,7 @@ function sendWhatsApp() {
   if (lastOrder.metodoPago === 'transferencia') {
     pagoInfo = '💳 *Forma de pago:* Transferencia bancaria\n💰 *Importe:* $ ' + total.toLocaleString('es-AR');
   } else if (lastOrder.metodoPago === 'cuotas') {
-    if (total >= 50000) {
+    if (total >= 100000) {
       pagoInfo = '📅 *Forma de pago:* 3 cuotas sin interés\n💰 *Importe por cuota:* $ ' + Math.round(total/3).toLocaleString('es-AR') + ' x 3 = $ ' + total.toLocaleString('es-AR');
     } else {
       const totalC = Math.round(total * 1.20);
