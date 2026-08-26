@@ -248,6 +248,7 @@
       <div class="product-admin-list" id="adminProductList"></div>
       <button class="admin-save-btn" onclick="addNewProduct()" style="background:var(--green);margin-top:20px">➕ Agregar producto de Uniformes</button>
       <button class="admin-save-btn" onclick="saveAdminChanges()">💾 Guardar todos los cambios</button>
+      <button class="admin-save-btn" onclick="restaurarProductosDefaultManual()" style="background:var(--gray);margin-top:8px">♻️ Restaurar productos por defecto (IDs 1-6)</button>
       <div style="margin-top:28px;border-top:2px solid var(--border);padding-top:20px">
         <h3 style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--admin);margin-bottom:16px">📚 Librería</h3>
         <div class="product-admin-list" id="adminLibreriaList"></div>
@@ -310,7 +311,14 @@ async function cargarProductosFirebase() {
       products = prods;
       renderProducts();
     } else {
-      await subirProductosDefault();
+      // ANTES: acá se llamaba a subirProductosDefault() automáticamente,
+      // lo que sobreescribía productos reales con los 6 de ejemplo cada vez
+      // que la colección aparecía vacía (por el motivo que sea: borrado,
+      // glitch de red, permisos, etc). Ahora NO se auto-repone solo:
+      // se avisa y se deja que sea una acción manual desde el panel admin.
+      console.warn('La colección "productos" está vacía en Firestore. No se auto-repuso nada — usá "Restaurar productos por defecto" en el panel admin si es necesario.');
+      products = [];
+      renderProducts();
     }
   } catch(e) {
     console.log('Firebase error:', e);
@@ -667,6 +675,14 @@ function checkAdminPass() {
     showToast('⚠️ Contraseña incorrecta');
     document.getElementById('adminPass').value = '';
   }
+}
+
+async function restaurarProductosDefaultManual() {
+  if (!confirm('Esto va a SOBREESCRIBIR los productos con ID 1 a 6 con los valores de fábrica (Remera Polo, Pantalón de Jogging, etc). Los productos con otros IDs no se tocan. ¿Confirmás?')) return;
+  await subirProductosDefault();
+  await cargarProductosFirebase();
+  renderAdminPanel();
+  showToast('✅ Productos por defecto restaurados');
 }
 
 function renderAdminPanel() {
