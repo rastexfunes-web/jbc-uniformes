@@ -245,6 +245,15 @@
       </div>
     </div>
     <div id="adminPanel" style="display:none">
+      <div style="background:var(--sky);border:2px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:700;font-size:14px;color:var(--navy)">🗄️ Backup de datos</div>
+            <div style="font-size:12px;color:var(--gray)">Descargá una copia de productos y librería en un archivo .json</div>
+          </div>
+          <button class="admin-save-btn" onclick="descargarBackup()" style="background:#0EA5E9;width:auto;margin-top:0;padding:10px 18px;white-space:nowrap">📥 Descargar backup</button>
+        </div>
+      </div>
       <div class="product-admin-list" id="adminProductList"></div>
       <button class="admin-save-btn" onclick="addNewProduct()" style="background:var(--green);margin-top:20px">➕ Agregar producto de Uniformes</button>
       <button class="admin-save-btn" onclick="saveAdminChanges()">💾 Guardar todos los cambios</button>
@@ -357,6 +366,55 @@ async function cargarLibreriaFirebase() {
     }
   } catch(e) {
     console.log('Librería no disponible:', e);
+  }
+}
+
+// ─── BACKUP ───────────────────────────────────────────────────────────────────
+async function descargarBackup() {
+  showToast('⏳ Generando backup...');
+  try {
+    const [prodSnap, libSnap] = await Promise.all([
+      db.collection('productos').get(),
+      db.collection('libreria').get()
+    ]);
+
+    const productosBackup = [];
+    prodSnap.forEach(d => productosBackup.push({ id: d.id, ...d.data() }));
+
+    const libreriaBackup = [];
+    libSnap.forEach(d => libreriaBackup.push({ id: d.id, ...d.data() }));
+
+    const ahora = new Date();
+    const backup = {
+      sitio: 'uniformescolegiorosario.com.ar',
+      generadoEl: ahora.toISOString(),
+      productos: productosBackup,
+      libreria: libreriaBackup
+    };
+
+    const json = JSON.stringify(backup, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const yyyy = ahora.getFullYear();
+    const mm = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dd = String(ahora.getDate()).padStart(2, '0');
+    const hh = String(ahora.getHours()).padStart(2, '0');
+    const mi = String(ahora.getMinutes()).padStart(2, '0');
+    const nombreArchivo = 'backup-uniformes-colegio-rosario-' + yyyy + '-' + mm + '-' + dd + '_' + hh + mi + '.json';
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nombreArchivo;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast('✅ Backup descargado');
+  } catch(e) {
+    console.error('Error generando backup:', e);
+    showToast('⚠️ Error al generar el backup');
   }
 }
 
