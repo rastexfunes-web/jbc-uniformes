@@ -285,6 +285,8 @@
   .okc-wa { width:100%; display:flex; align-items:center; justify-content:center; gap:14px; padding:16px; border:0; border-radius:14px; background:linear-gradient(180deg,#C4604A,var(--ck-brick2)); color:#fff; font-family:'Montserrat',sans-serif; font-size:19px; font-weight:700; cursor:pointer; box-shadow:0 6px 18px rgba(180,81,61,.35); transition:transform .15s; }
   .okc-prep { background:#fff; border-left:4px solid var(--ck-brick); border-radius:12px; padding:14px 16px; margin-bottom:18px; font-size:14px; line-height:1.5; box-shadow:0 2px 10px rgba(11,26,51,.08); }
   .okc-prep b { display:block; font-family:'Montserrat',sans-serif; font-size:15px; color:var(--ck-brick); margin-bottom:4px; }
+  .okc-gracias { text-align:center; border-left:0; border-top:4px solid var(--ck-brick); padding:18px 18px 20px; font-size:16px; }
+  .okc-gracias b { font-size:21px; margin-bottom:8px; }
   .okc-mp { background:#009ee3; box-shadow:0 6px 18px rgba(0,158,227,.3); }
   .okc-wa:active { transform:scale(.98); }
   .okc-wa svg { width:30px; height:30px; padding-right:14px; border-right:1px solid rgba(255,255,255,.5); box-sizing:content-box; }
@@ -429,8 +431,7 @@
     </div>
     <div class="okc-body">
       <div class="okc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span id="orderNumberDisplay"></span></div>
-      <div class="okc-thanks">¡Muchas gracias por tu compra! 🙌</div>
-      <div class="okc-prep"><b>🧵 Estamos preparando tu pedido</b>Vamos a preparar tu pedido y <strong>cuando esté listo te avisamos por WhatsApp</strong> para que lo retires.</div>
+      <div class="okc-prep okc-gracias"><b>¡Muchas gracias por tu compra! 🙌</b>Vamos a preparar el pedido y <strong>te avisamos por WhatsApp</strong> para retirarlo.</div>
       <div class="okc-box" id="infoPago" style="display:none">
         <div class="ck-box-head"><span id="infoPagoIcono"></span><span id="infoPagoTitulo"></span></div>
         <div id="infoPagoContenido"></div>
