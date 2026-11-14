@@ -366,7 +366,7 @@
 <section class="info-sec faq" id="faq">
   <h2>Preguntas frecuentes</h2>
   <details><summary>¿Cómo hago mi pedido?</summary><p>Elegí el producto, el talle y la cantidad, agregalo al pedido, completá tu nombre y teléfono y confirmá. Listo: tu pedido queda registrado.</p></details>
-  <details><summary>¿Cómo puedo pagar?</summary><p>Por transferencia bancaria, en 3 cuotas o con Mercado Pago. Las 3 cuotas son sin interés en compras mayores a $100.000; en compras menores tienen un 20% adicional. Para cuotas y Mercado Pago te enviamos el link de pago por WhatsApp.</p></details>
+  <details><summary>¿Cómo puedo pagar?</summary><p>Con Mercado Pago: tarjeta de crédito, débito o dinero en cuenta. En compras mayores a $100.000 tenés 3 cuotas sin interés; en compras menores podés pagar en cuotas con el interés que indique Mercado Pago. Cuando el pago se acredita, el pedido nos llega por WhatsApp.</p></details>
   <details><summary>¿Dónde retiro mi pedido?</summary><p>En la escuela. Cuando tu pedido esté listo te avisamos por WhatsApp.</p></details>
   <details><summary>¿Qué pasa después de confirmar el pedido?</summary><p>Preparamos tu pedido y, cuando esté listo, te avisamos por WhatsApp al número que dejaste.</p></details>
 </section>
@@ -409,31 +409,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21l1.6-4.7A9 9 0 1 1 8 19.6z"/><path d="M9 8.5c0 3 3.5 6.5 6.5 6.5l1-1.6-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z"/></svg>
         <input type="tel" id="clientPhone" placeholder="Ej: 341 123 4567">
       </div>
-      <label class="ck-label">¿Cómo querés pagar? <b>*</b></label>
-      <div class="ck-pay">
-        <button type="button" class="active" id="optTransfer" onclick="selectPago('transferencia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Transferencia</button>
-        <button type="button" id="optCuotas" onclick="selectPago('cuotas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>3 Cuotas</button>
-        <button type="button" id="optMP" onclick="selectPago('mp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 12l4-4 4 1 3-2 4 1 5 4-4 4-5-3-2 2-3-2-2 2z"/></svg>Mercado Pago</button>
-      </div>
-      <div class="ck-box" id="transferInfo">
-        <div class="ck-box-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-5 9 5M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18"/></svg><span>Datos de transferencia</span></div>
-        <div class="ck-box-body">
-          <div class="ck-row"><span>Titular</span><strong>RASTEX S.R.L.</strong></div>
-          <div class="ck-row"><span>CBU</span><div class="v"><strong id="cbuVal">0070220320000007504073</strong><button type="button" class="ck-copy" onclick="copiar('cbuVal',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span class="lbl">Copiar</span></button></div></div>
-          <div class="ck-row"><span>Alias</span><div class="v"><strong id="aliasVal">raster.complejo</strong><button type="button" class="ck-copy" onclick="copiar('aliasVal',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span class="lbl">Copiar</span></button></div></div>
-          <div class="ck-row"><span>CUIT</span><strong>33-71910663-9</strong></div>
-          <div class="ck-total"><span>Total a transferir</span><span class="ck-monto" id="checkoutTotal">$0</span></div>
-        </div>
-      </div>
-      <div class="ck-box" id="resumenCuotas" style="display:none">
-        <div class="ck-box-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg><span>Pago en 3 cuotas</span></div>
-        <div class="ck-box-body" id="resumenCuotasContenido"></div>
-      </div>
-      <div class="ck-box" id="resumenMP" style="display:none">
-        <div class="ck-box-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 12l4-4 4 1 3-2 4 1 5 4-4 4-5-3-2 2-3-2-2 2z"/></svg><span>Pagar con Mercado Pago</span></div>
+      <label class="ck-label">Forma de pago</label>
+      <div class="ck-box" id="resumenMP">
+        <div class="ck-box-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 12l4-4 4 1 3-2 4 1 5 4-4 4-5-3-2 2-3-2-2 2z"/></svg><span>Mercado Pago</span></div>
         <div class="ck-box-body" id="resumenMPContenido"></div>
       </div>
-      <button type="button" class="ck-confirm" onclick="confirmOrder()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12l3 3 5-6"/></svg>Confirmar pedido</button>
+      <button type="button" class="ck-confirm" id="btnConfirmar" onclick="confirmOrder()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2 12l4-4 4 1 3-2 4 1 5 4-4 4-5-3-2 2-3-2-2 2z"/></svg><span class="lbl">Pagar con Mercado Pago</span></button>
       <button type="button" class="ck-back" onclick="closeCheckout()">Volver al carrito</button>
     </div>
   </div>
@@ -540,7 +521,8 @@ let products = [...defaultProducts];
 let productosLibreria = [];
 let cart = [];
 let lastOrder = null;
-let metodoPagoSeleccionado = 'transferencia';
+let metodoPagoSeleccionado = 'mp';
+const PEDIDO_PENDIENTE_KEY = 'ucr_pedido_pendiente';
 let adminUnlocked = false;
 
 // ─── FIREBASE FUNCIONES ───────────────────────────────────────────────────────
@@ -830,58 +812,107 @@ function goTo(sec) {
 
 // ─── CHECKOUT ─────────────────────────────────────────────────────────────────
 function openCheckout() {
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('checkoutTotal').textContent = '$ ' + total.toLocaleString('es-AR');
+  if (!cart.length) { showToast('⚠️ Tu carrito está vacío'); return; }
   document.getElementById('checkoutModal').classList.add('open');
-  selectPago('transferencia');
+  selectPago('mp');
 }
 
 function closeCheckout() { document.getElementById('checkoutModal').classList.remove('open'); }
 
-function selectPago(metodo) {
-  metodoPagoSeleccionado = metodo;
-  ['optTransfer','optCuotas','optMP'].forEach(id => document.getElementById(id).classList.remove('active'));
+function selectPago() {
+  metodoPagoSeleccionado = 'mp';
   const total = cart.reduce((s,i)=>s+i.price*i.qty, 0);
-  document.getElementById('transferInfo').style.display = 'none';
-  document.getElementById('resumenCuotas').style.display = 'none';
-  document.getElementById('resumenMP').style.display = 'none';
-  if (metodo === 'transferencia') {
-    document.getElementById('optTransfer').classList.add('active');
-    document.getElementById('checkoutTotal').textContent = '$ ' + total.toLocaleString('es-AR');
-    document.getElementById('transferInfo').style.display = 'block';
-  } else if (metodo === 'cuotas') {
-    document.getElementById('optCuotas').classList.add('active');
-    document.getElementById('resumenCuotas').style.display = 'block';
-    if (total >= 100000) {
-      const cuota = Math.round(total / 3);
-      document.getElementById('resumenCuotasContenido').innerHTML = '<div class="ck-row"><span>Plan</span><strong>3 cuotas sin interés 🎉</strong></div><div class="ck-row"><span>Cada cuota</span><strong>$ ' + cuota.toLocaleString('es-AR') + '</strong></div><div class="ck-total"><span>Total</span><span class="ck-monto">$ ' + total.toLocaleString('es-AR') + '</span></div>';
-    } else {
-      const totalC = Math.round(total * 1.20);
-      const cuota  = Math.round(totalC / 3);
-      document.getElementById('resumenCuotasContenido').innerHTML = '<div class="ck-row"><span>Plan</span><strong>3 cuotas (+20%)</strong></div><div class="ck-row"><span>Cada cuota</span><strong>$ ' + cuota.toLocaleString('es-AR') + '</strong></div><div class="ck-total"><span>Total</span><span class="ck-monto">$ ' + totalC.toLocaleString('es-AR') + '</span></div><p class="ck-note">Superando $100.000 son 3 cuotas sin interés.</p>';
-    }
+  const fmt = n => '$ ' + n.toLocaleString('es-AR');
+  let html;
+  if (total >= 100000) {
+    html = '<div class="ck-row"><span>Cuotas</span><strong>Hasta 3 sin interés 🎉</strong></div>'
+         + '<div class="ck-row"><span>3 cuotas de</span><strong>' + fmt(Math.round(total / 3)) + '</strong></div>';
   } else {
-    document.getElementById('optMP').classList.add('active');
-    document.getElementById('resumenMP').style.display = 'block';
-    document.getElementById('resumenMPContenido').innerHTML = '<p class="ck-note">Al confirmar vas a ver el botón para pagar con Mercado Pago.</p><div class="ck-total"><span>Total a pagar</span><span class="ck-monto">$ ' + total.toLocaleString('es-AR') + '</span></div>';
+    html = '<div class="ck-row"><span>Cuotas</span><strong>Con el interés de Mercado Pago</strong></div>'
+         + '<p class="ck-note">Superando $100.000 tenés 3 cuotas sin interés.</p>';
   }
+  html += '<p class="ck-note">Tarjeta de crédito, débito o dinero en cuenta. Te llevamos a Mercado Pago para pagar y después volvés acá.</p>'
+       +  '<div class="ck-total"><span>Total</span><span class="ck-monto">' + fmt(total) + '</span></div>';
+  document.getElementById('resumenMPContenido').innerHTML = html;
 }
 
-function confirmOrder() {
+async function confirmOrder() {
   const name  = document.getElementById('clientName').value.trim();
   const phone = document.getElementById('clientPhone').value.trim();
   if (!name || !phone) { showToast('⚠️ Completá los campos obligatorios'); return; }
+  if (!cart.length) { showToast('⚠️ Tu carrito está vacío'); return; }
+  const btn = document.getElementById('btnConfirmar');
+  const lbl = btn.querySelector('.lbl');
+  btn.disabled = true; lbl.textContent = 'Conectando con Mercado Pago...';
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   const now = new Date();
   const orderNum = getNextOrderNumber();
-  lastOrder = { numero:orderNum, fecha:now.toLocaleDateString('es-AR'), hora:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), nombre:name, telefono:phone, metodoPago:metodoPagoSeleccionado, items:[...cart], total };
-  document.getElementById('orderNumberDisplay').textContent = 'Pedido N° ' + String(orderNum).padStart(4,'0');
-  document.getElementById('checkoutModal').classList.remove('open');
-  document.getElementById('cartModal').classList.remove('open');
+  const ref = 'UCR-' + String(orderNum).padStart(4,'0') + '-' + Date.now().toString(36).toUpperCase();
+  const order = { numero:orderNum, ref, fecha:now.toLocaleDateString('es-AR'), hora:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), nombre:name, telefono:phone, metodoPago:'mp',
+                  items: cart.map(i => ({ id:i.id, name:i.name, size:i.size, qty:i.qty, price:i.price })), total };
+  try { localStorage.setItem(PEDIDO_PENDIENTE_KEY, JSON.stringify(order)); } catch(e) {}
+  try {
+    const r = await fetch('/api/create-preference', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.init_point) throw new Error(d.error || 'sin init_point');
+    window.location.href = d.init_point;
+  } catch(e) {
+    console.error('Mercado Pago:', e);
+    showToast('⚠️ No pudimos conectar con Mercado Pago. Probá de nuevo.');
+    btn.disabled = false; lbl.textContent = 'Pagar con Mercado Pago';
+  }
+}
+
+// Cuando el cliente vuelve de Mercado Pago
+async function revisarRetornoMP() {
+  const q = new URLSearchParams(location.search);
+  const status = q.get('collection_status') || q.get('status');
+  const paymentId = q.get('payment_id') || q.get('collection_id');
+  if (!status) return;
+  history.replaceState(null, '', location.pathname);
+  let pend = null;
+  try { pend = JSON.parse(localStorage.getItem(PEDIDO_PENDIENTE_KEY) || 'null'); } catch(e) {}
+
+  if (status !== 'approved' || !paymentId || paymentId === 'null') {
+    if (status === 'pending' || status === 'in_process') {
+      showToast('⏳ Tu pago está en revisión. Cuando se acredite te avisamos.');
+    } else {
+      showToast('❌ El pago no se completó. Podés intentar de nuevo.');
+      if (pend && !cart.length) { cart = pend.items.map(i => ({ ...i })); updateCartUI(); }
+    }
+    return;
+  }
+
+  let ver = null;
+  try { const r = await fetch('/api/verify-payment?id=' + encodeURIComponent(paymentId)); ver = await r.json(); } catch(e) {}
+  if (!ver || ver.status !== 'approved') {
+    showToast('⏳ Estamos verificando tu pago...');
+    return;
+  }
+  let order = (pend && pend.ref === ver.external_reference) ? pend : null;
+  if (!order && ver.pedido) order = ver.pedido;            // por si volvió en otro navegador
+  if (!order) { showToast('✅ Pago acreditado. Envianos el comprobante por WhatsApp.'); return; }
+
+  order.pagado = ver.transaction_amount;
+  order.cuotas = ver.installments;
+  order.paymentId = String(paymentId);
+  lastOrder = order;
+  cart = []; updateCartUI();
+  try { localStorage.removeItem(PEDIDO_PENDIENTE_KEY); } catch(e) {}
+
+  document.getElementById('orderNumberDisplay').textContent = 'Pedido N° ' + String(order.numero).padStart(4,'0');
   document.getElementById('successModal').classList.add('open');
-  registrarEnSheets(lastOrder);
-  mostrarInfoPago(lastOrder);
-  setTimeout(() => sendWhatsApp(), 600);
+  mostrarInfoPago(order);
+
+  let yaRegistrado = false;
+  try { yaRegistrado = localStorage.getItem('ucr_pago_' + paymentId) === '1'; localStorage.setItem('ucr_pago_' + paymentId, '1'); } catch(e) {}
+  if (!yaRegistrado) {
+    registrarEnSheets(order);
+    setTimeout(() => sendWhatsApp(), 600);
+  }
 }
 
 async function descontarStock(items) {
@@ -904,7 +935,7 @@ function mostrarInfoPago(order) {
   const aviso = '<div class="okc-note">⏳ <strong>En breve te enviamos el link de pago por WhatsApp.</strong></div>';
   document.getElementById('infoPago').style.display = 'block';
   const btnMP = document.getElementById('btnMercadoPago');
-  if (btnMP) btnMP.style.display = order.metodoPago === 'mp' ? 'block' : 'none';
+  if (btnMP) btnMP.style.display = 'none';
   const icono = document.getElementById('infoPagoIcono');
   const titulo = document.getElementById('infoPagoTitulo');
   const contenido = document.getElementById('infoPagoContenido');
@@ -923,8 +954,13 @@ function mostrarInfoPago(order) {
     }
   } else {
     icono.innerHTML = ICON_MP;
-    titulo.textContent = 'Mercado Pago';
-    contenido.innerHTML = importe(total, 'Total:') + '<div class="okc-note">Pagá con el botón de Mercado Pago y mandanos el comprobante por WhatsApp.</div>';
+    titulo.textContent = 'Pago acreditado ✅';
+    const pagado = order.pagado || total;
+    contenido.innerHTML = '<div class="okc-data"><b>Medio:</b><span>Mercado Pago</span>'
+      + (order.cuotas > 1 ? '<b>Cuotas:</b><span>' + order.cuotas + '</span>' : '')
+      + (order.paymentId ? '<b>N° de pago:</b><span>' + order.paymentId + '</span>' : '') + '</div>'
+      + importe(pagado, 'Pagado:')
+      + '<div class="okc-note">Si no se abrió WhatsApp, tocá <strong>Enviar pedido por WhatsApp</strong> para mandarnos el pedido.</div>';
   }
 }
 
@@ -942,7 +978,7 @@ function sendWhatsApp() {
       pagoInfo = '📅 *Forma de pago:* 3 cuotas con 20% adicional\n💰 *Importe por cuota:* $ ' + Math.round(totalC/3).toLocaleString('es-AR') + ' x 3 = $ ' + totalC.toLocaleString('es-AR');
     }
   } else {
-    pagoInfo = '📱 *Forma de pago:* Mercado Pago\n💰 *Importe:* $ ' + total.toLocaleString('es-AR');
+    pagoInfo = '📱 *Forma de pago:* Mercado Pago\n' + (lastOrder.paymentId ? '✅ *PAGO ACREDITADO*\n💰 *Pagado:* $ ' + Number(lastOrder.pagado || total).toLocaleString('es-AR') + (lastOrder.cuotas > 1 ? ' en ' + lastOrder.cuotas + ' cuotas' : '') + '\n🆔 *N° de pago MP:* ' + lastOrder.paymentId : '💰 *Importe:* $ ' + total.toLocaleString('es-AR'));
   }
   const itemLines = lastOrder.items.map(i => '  • ' + i.name + ' | Talle: ' + i.size + ' | Cant: ' + i.qty + ' | $ ' + (i.price*i.qty).toLocaleString('es-AR')).join('\n');
   const msg = '🛒 *NUEVO PEDIDO - Uniformes Colegio Rosario*\n🧾 *N° ' + String(lastOrder.numero).padStart(4,'0') + '*\n📅 ' + lastOrder.fecha + ' ' + lastOrder.hora + '\n\n👤 *Cliente:* ' + lastOrder.nombre + '\n📞 *Teléfono:* ' + lastOrder.telefono + '\n\n📦 *Detalle:*\n' + itemLines + '\n\n' + pagoInfo;
@@ -1190,6 +1226,7 @@ async function saveLibreriaChanges() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 cargarProductosFirebase();
+revisarRetornoMP();
 setTimeout(() => cargarLibreriaFirebase(), 500);
 if (window.location.search.includes('admin')) setTimeout(() => openAdmin(), 800);
 </script>

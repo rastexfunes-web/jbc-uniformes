@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
     if (status === 'approved') {
       // Armar mensaje WhatsApp
       const msg =
-`✅ *PAGO CONFIRMADO - JBC Uniformes*
+`✅ *PAGO CONFIRMADO - Uniformes Colegio Rosario*
 
 🧾 *Pedido:* ${orderRef}
 👤 *Cliente:* ${payerName}

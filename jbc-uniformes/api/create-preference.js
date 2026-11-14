@@ -2,8 +2,14 @@ const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN,
-  options: { timeout: 5000 }
+  options: { timeout: 8000 }
 });
+
+const SITIO = 'https://www.uniformescolegiorosario.com.ar';
+const ORIGENES_OK = [
+  'https://www.uniformescolegiorosario.com.ar',
+  'https://uniformescolegiorosario.com.ar'
+];
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,46 +18,53 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (!process.env.MP_ACCESS_TOKEN) return res.status(500).json({ error: 'Falta MP_ACCESS_TOKEN en Vercel' });
 
   try {
-    const { items, payer, orderNumber } = req.body;
+    const { order } = req.body || {};
+    if (!order || !Array.isArray(order.items) || !order.items.length) {
+      return res.status(400).json({ error: 'Pedido vacío' });
+    }
+
+    const items = order.items.map(i => ({
+      id: String(i.id),
+      title: `${i.name} - Talle ${i.size}`.slice(0, 250),
+      quantity: Math.max(1, Math.round(Number(i.qty) || 1)),
+      unit_price: Math.max(1, Number(i.price) || 0),
+      currency_id: 'ARS',
+      category_id: 'fashion'
+    }));
+
+    // Vuelve al mismo dominio desde el que se compró (o al principal)
+    const origen = ORIGENES_OK.includes(req.headers.origin) ? req.headers.origin : SITIO;
+
+    // Copia compacta del pedido, por si el cliente vuelve desde otro navegador
+    const pedido = JSON.stringify({
+      numero: order.numero, ref: order.ref, fecha: order.fecha, hora: order.hora,
+      nombre: String(order.nombre || '').slice(0, 80), telefono: String(order.telefono || '').slice(0, 30),
+      metodoPago: 'mp', total: order.total,
+      items: order.items.map(i => ({ id: i.id, name: i.name, size: i.size, qty: i.qty, price: i.price }))
+    });
 
     const preference = new Preference(client);
     const result = await preference.create({
       body: {
-        items: items.map(item => ({
-          id: String(item.id),
-          title: `${item.name} - Talle ${item.size}`,
-          quantity: Number(item.qty),
-          unit_price: Number(item.price),
-          currency_id: 'ARS',
-          category_id: 'fashion'
-        })),
-        payer: {
-          name: payer.name,
-          phone: { area_code: '341', number: payer.phone }
-        },
-        external_reference: `JBC-${String(orderNumber).padStart(4, '0')}`,
-        notification_url: `https://jbc-uniformes.vercel.app/api/webhook`,
-        back_urls: {
-          success: `https://jbc-uniformes.vercel.app`,
-          failure: `https://jbc-uniformes.vercel.app`,
-          pending: `https://jbc-uniformes.vercel.app`
-        },
+        items,
+        payer: { name: String(order.nombre || '') },
+        external_reference: String(order.ref || ''),
+        metadata: { pedido },
+        notification_url: `${SITIO}/api/webhook`,
+        back_urls: { success: origen, failure: origen, pending: origen },
         auto_return: 'approved',
-        statement_descriptor: 'JBC Uniformes',
-        expires: false
+        // Solo pagos que se acreditan al momento (sin Rapipago / Pago Fácil)
+        payment_methods: { excluded_payment_types: [{ id: 'ticket' }, { id: 'atm' }] },
+        statement_descriptor: 'UNIFORMES ROSARIO'
       }
     });
 
-    return res.status(200).json({
-      id: result.id,
-      init_point: result.init_point,
-      sandbox_init_point: result.sandbox_init_point
-    });
-
+    return res.status(200).json({ id: result.id, init_point: result.init_point });
   } catch (error) {
-    console.error('MP Error:', JSON.stringify(error));
-    return res.status(500).json({ error: error.message, detail: JSON.stringify(error) });
+    console.error('MP Error:', error);
+    return res.status(500).json({ error: error.message || 'Error de Mercado Pago' });
   }
 };
