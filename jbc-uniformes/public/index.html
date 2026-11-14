@@ -182,9 +182,27 @@
   .faq details { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:10px; }
   .faq summary { cursor:pointer; font-weight:700; font-size:15px; }
   .faq p { margin-top:10px; font-size:14px; line-height:1.6; color:#374151; }
-  .contact-box { background:#0B1A33; color:#fff; border-radius:16px; padding:28px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
-  .contact-box h3 { font-size:20px; font-weight:800; margin-bottom:4px; }
-  .contact-box p { color:rgba(255,255,255,.8); font-size:14px; }
+  .contact-box { position:relative; overflow:hidden; background:#0B1A33; color:#fff; border-radius:22px; padding:20px 20px 20px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; box-shadow:0 8px 24px rgba(11,26,51,.18); }
+  .cb-left { display:flex; align-items:center; gap:18px; min-width:0; }
+  .cb-ico svg { width:52px; height:52px; display:block; }
+  .cb-bar { width:4px; height:52px; border-radius:2px; background:#B4513D; flex-shrink:0; }
+  .contact-box h3 { font-size:30px; font-weight:800; margin:0; line-height:1.15; }
+  .cb-stripes { position:relative; align-self:stretch; width:110px; flex-shrink:0; margin:-20px -10px -20px auto; }
+  .cb-stripes i { position:absolute; top:0; bottom:0; width:22px; transform:skewX(-32deg); }
+  .cb-stripes i:first-child { left:30px; background:#F7EFE6; }
+  .cb-stripes i:last-child { left:62px; background:#B4513D; }
+  .cb-btn { display:flex; align-items:center; gap:12px; background:linear-gradient(180deg,#C4604A,#A9472F); color:#fff; text-decoration:none; font-weight:700; font-size:19px; padding:14px 20px; border-radius:14px; white-space:nowrap; flex-shrink:0; transition:transform .15s, box-shadow .15s; }
+  .cb-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(180,81,61,.4); }
+  .cb-btn svg { width:34px; height:34px; }
+  .cb-btn .cb-arrow { width:26px; height:26px; margin-left:4px; }
+  @media (max-width:820px) {
+    .contact-box { flex-direction:column; align-items:stretch; text-align:left; padding:22px; }
+    .cb-stripes { display:none; }
+    .contact-box h3 { font-size:22px; }
+    .cb-ico svg { width:40px; height:40px; } .cb-bar { height:40px; }
+    .cb-btn { justify-content:center; font-size:17px; }
+    .cb-btn svg { width:28px; height:28px; }
+  }
   .wa-btn { background:#16A34A; color:#fff; text-decoration:none; font-weight:800; padding:14px 24px; border-radius:12px; font-size:15px; }
   footer.site-foot { text-align:center; color:#6B7280; font-size:12px; padding:22px 16px 34px; }
 
@@ -375,8 +393,9 @@
 
 <section class="info-sec" id="contacto">
   <div class="contact-box">
-    <div><h3>¿Tenés alguna consulta?</h3><p>Escribinos por WhatsApp y te respondemos.</p></div>
-    <a class="wa-btn" href="https://wa.me/5493416850004" target="_blank" rel="noopener">📲 Escribinos por WhatsApp</a>
+    <div class="cb-left"><span class="cb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.7A9 9 0 1 1 8 19.6z"/><path d="M9 8.5c0 3 3.5 6.5 6.5 6.5l1-1.6-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z"/></svg></span><span class="cb-bar"></span><h3>¿Tenés alguna consulta?</h3></div>
+    <span class="cb-stripes" aria-hidden="true"><i></i><i></i></span>
+    <a class="cb-btn" href="https://wa.me/5493416850004" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.7A9 9 0 1 1 8 19.6z"/><path d="M9 8.5c0 3 3.5 6.5 6.5 6.5l1-1.6-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z"/></svg><span>Escribinos x WhatsApp</span><svg class="cb-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
   </div>
 </section>
 <footer class="site-foot">© Uniformes Colegio Rosario</footer>
