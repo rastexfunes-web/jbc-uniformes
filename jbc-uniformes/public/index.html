@@ -862,24 +862,24 @@ async function confirmOrder() {
   const btn = document.getElementById('btnConfirmar');
   const lbl = btn.querySelector('.lbl');
   btn.disabled = true; lbl.textContent = 'Conectando con Mercado Pago...';
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   const now = new Date();
-  const orderNum = getNextOrderNumber();
-  const ref = 'UCR-' + String(orderNum).padStart(4,'0') + '-' + Date.now().toString(36).toUpperCase();
-  const order = { numero:orderNum, ref, fecha:now.toLocaleDateString('es-AR'), hora:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), nombre:name, telefono:phone, metodoPago:'mp',
-                  items: cart.map(i => ({ id:i.id, name:i.name, size:i.size, qty:i.qty, price:i.price })), total };
-  try { localStorage.setItem(PEDIDO_PENDIENTE_KEY, JSON.stringify(order)); } catch(e) {}
+  // El número de pedido y los precios los define el servidor (no se pueden falsear desde el navegador)
+  const order = { fecha:now.toLocaleDateString('es-AR'), hora:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}), nombre:name, telefono:phone, metodoPago:'mp',
+                  items: cart.map(i => ({ id:i.id, name:i.name, size:i.size, qty:i.qty, price:i.price })) };
   try {
     const r = await fetch('/api/create-preference', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ order })
     });
     const d = await r.json().catch(() => ({}));
-    if (!r.ok || !d.init_point) throw new Error(d.error || 'sin init_point');
+    if (!r.ok || !d.init_point) {
+      const err = new Error(d.error || 'sin init_point'); err.paraCliente = d.mensaje; throw err;
+    }
+    try { localStorage.setItem(PEDIDO_PENDIENTE_KEY, JSON.stringify(d.pedido)); } catch(e) {}
     window.location.href = d.init_point;
   } catch(e) {
     console.error('Mercado Pago:', e);
-    showToast('⚠️ No pudimos conectar con Mercado Pago. Probá de nuevo.');
+    showToast(e.paraCliente || '⚠️ No pudimos conectar con Mercado Pago. Probá de nuevo.');
     btn.disabled = false; lbl.textContent = 'Pagar con Mercado Pago';
   }
 }
