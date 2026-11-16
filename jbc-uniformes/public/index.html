@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <style>
   :root {
     --navy: #0B1A33;
@@ -471,12 +472,13 @@
     <p class="admin-subtitle">Editá productos, precios y fotos.</p>
     <div id="adminLogin">
       <div class="admin-login">
-        <p style="font-size:14px;font-weight:600;text-align:center">Ingresá tu contraseña</p>
+        <p style="font-size:14px;font-weight:600;text-align:center">Ingresá tu contraseña de administrador</p>
         <input type="password" id="adminPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkAdminPass()">
-        <button class="admin-login-btn" onclick="checkAdminPass()">Ingresar</button>
+        <button class="admin-login-btn" id="adminLoginBtn" onclick="checkAdminPass()">Ingresar</button>
       </div>
     </div>
     <div id="adminPanel" style="display:none">
+      <div style="text-align:right;margin:-6px 0 10px"><button onclick="cerrarSesionAdmin()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray)">🔒 Cerrar sesión</button></div>
       <div style="background:var(--sky);border:2px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
           <div>
@@ -515,9 +517,11 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const fbAuth = firebase.auth();
 
 // ─── CONSTANTES ───────────────────────────────────────────────────────────────
-const ADMIN_PASS     = 'Colegio2026@';
+// Usuario del admin en Firebase Authentication (proyecto colegio-rosario)
+const ADMIN_EMAIL    = 'admin@uniformescolegiorosario.com.ar';
 const WA_NUMBER      = '5493416850004';
 const SHEETS_URL     = 'https://script.google.com/macros/s/AKfycbzDSjPRmizO93pAQ5vKgbUmnmpL6rvGcU2IVQrBSthVvs60K1T2PJta1qwtalgKbUQH/exec';
 const MP_LINK        = 'https://link.mercadopago.com.ar/colegiorosario';
@@ -542,6 +546,8 @@ let lastOrder = null;
 let metodoPagoSeleccionado = 'mp';
 const PEDIDO_PENDIENTE_KEY = 'ucr_pedido_pendiente';
 let adminUnlocked = false;
+// La sesión del admin queda guardada en el navegador hasta que toques "Cerrar sesión"
+fbAuth.onAuthStateChanged(u => { adminUnlocked = !!(u && u.email === ADMIN_EMAIL); });
 
 // ─── FIREBASE FUNCIONES ───────────────────────────────────────────────────────
 async function cargarProductosFirebase() {
@@ -1065,19 +1071,37 @@ function openAdmin() {
 
 function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
 
-function checkAdminPass() {
-  const pass = document.getElementById('adminPass').value;
-  if (pass === ADMIN_PASS) {
+async function checkAdminPass() {
+  const input = document.getElementById('adminPass');
+  const btn = document.getElementById('adminLoginBtn');
+  const pass = input.value;
+  if (!pass) return;
+  btn.disabled = true; btn.textContent = 'Ingresando...';
+  try {
+    await fbAuth.signInWithEmailAndPassword(ADMIN_EMAIL, pass);
     adminUnlocked = true;
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-    document.getElementById('adminPass').value = '';
     renderAdminPanel();
     renderAdminLibreria();
-  } else {
-    showToast('⚠️ Contraseña incorrecta');
-    document.getElementById('adminPass').value = '';
+  } catch (e) {
+    console.error('Login admin:', e);
+    const c = e && e.code || '';
+    if (c === 'auth/operation-not-allowed' || c === 'auth/configuration-not-found') showToast('⚠️ Falta activar el ingreso con email en Firebase');
+    else if (c === 'auth/too-many-requests') showToast('⚠️ Demasiados intentos. Esperá unos minutos.');
+    else if (c === 'auth/network-request-failed') showToast('⚠️ Sin conexión. Probá de nuevo.');
+    else showToast('⚠️ Contraseña incorrecta');
+  } finally {
+    input.value = '';
+    btn.disabled = false; btn.textContent = 'Ingresar';
   }
+}
+
+async function cerrarSesionAdmin() {
+  try { await fbAuth.signOut(); } catch (e) {}
+  adminUnlocked = false;
+  closeAdmin();
+  showToast('🔒 Sesión cerrada');
 }
 
 async function restaurarProductosDefaultManual() {
