@@ -2,14 +2,15 @@
 // "Ventas Web" de Rastex Gestión. Mercado Pago es la fuente: aparece cada pago
 // aprobado aunque el cliente no haya vuelto a la tienda.
 //
-// Solo responde a Marcelo logueado en Rastex Gestión: se verifica su sesión
+// Solo responde a Marcelo y Luciana logueados en Rastex Gestión: se verifica su sesión
 // de Firebase (proyecto pos-rastex) con el token que manda la app.
 
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 const admin = require('firebase-admin');
 
 const POS_PROJECT_ID = 'pos-rastex';
-const UIDS_PERMITIDOS = ['H2y2uvY7g0d4vpZgOH6MERC6mEI2']; // Marcelo (dueño)
+const UID_DUENO = 'H2y2uvY7g0d4vpZgOH6MERC6mEI2'; // Marcelo
+const UIDS_PERMITIDOS = [UID_DUENO, 'QojAJ4SZlzPjPGe9N9BJmVwdAIt1']; // + Luciana (sin ver lo que te queda)
 const ORIGENES = [
   'https://rastex-gestion.com.ar',
   'https://www.rastex-gestion.com.ar',
@@ -40,9 +41,11 @@ module.exports = async (req, res) => {
   // 1) ¿Es Marcelo?
   const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
   if (!token) return res.status(401).json({ error: 'Falta iniciar sesión' });
+  let esDueno = false;
   try {
     const decoded = await posApp.auth().verifyIdToken(token);
     if (!UIDS_PERMITIDOS.includes(decoded.uid)) return res.status(403).json({ error: 'Sin permiso' });
+    esDueno = decoded.uid === UID_DUENO;
   } catch (e) {
     return res.status(401).json({ error: 'Sesión inválida, volvé a entrar' });
   }
@@ -74,7 +77,7 @@ module.exports = async (req, res) => {
           ref,
           fechaAprobado: p.date_approved,
           pagado: p.transaction_amount,
-          neto: p.transaction_details ? p.transaction_details.net_received_amount : null,
+          neto: esDueno && p.transaction_details ? p.transaction_details.net_received_amount : null,
           cuotas: p.installments,
           medio: p.payment_method_id,
           pedido
